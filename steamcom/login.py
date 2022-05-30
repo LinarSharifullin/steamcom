@@ -7,6 +7,7 @@ import requests
 from steamcom.models import SteamUrl
 from steamcom.guard import generate_one_time_code
 from steamcom.exceptions import CaptchaRequired, InvalidCredentials
+from steamcom.utils import generate_session_id
 
 
 
@@ -80,3 +81,11 @@ class LoginExecutor:
     def _assert_valid_credentials(login_response: requests.Response) -> None:
         if not login_response.json()['success']:
             raise InvalidCredentials(login_response.json()['message'])
+
+    def _set_sessionid_cookies(self) -> None:
+        session_id = generate_session_id()
+        community_domain = SteamUrl.COMMUNITY_URL[8:]
+        store_domain = SteamUrl.STORE_URL[8:]
+        self.session.cookies.set('sessionid', session_id, community_domain)
+        self.session.cookies.set('sessionid', session_id, store_domain)
+
