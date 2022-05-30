@@ -18,6 +18,15 @@ class LoginExecutor:
         self.shared_secret = shared_secret
         self.session = session
 
+    def _send_login_request(self) -> requests.Response:
+        rsa_params = self._fetch_rsa_params()
+        encrypted_password = self._encrypt_password(rsa_params)
+        rsa_timestamp = rsa_params['rsa_timestamp']
+        request_data = self._prepare_login_request_data(encrypted_password, 
+            rsa_timestamp)
+        url = SteamUrl.STORE_URL + '/login/dologin'
+        return self.session.post(url, data=request_data)
+
     def _fetch_rsa_params(self) -> dict:
         key_response = self.session.post(SteamUrl.COMMUNITY_URL
             + '/login/getrsakey/', data={'username': self.username}).json()
