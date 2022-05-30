@@ -1,9 +1,11 @@
 import rsa
 import base64
+import time
 
 import requests
 
 from steamcom.models import SteamUrl
+from guard import generate_one_time_code
 
 
 
@@ -29,3 +31,19 @@ class LoginExecutor:
         encoded_password = self.password.encode('utf-8')
         encrypted_rsa = rsa.encrypt(encoded_password, rsa_params['rsa_key'])
         return base64.b64encode(encrypted_rsa)
+    
+    def _prepare_login_request_data(self, encrypted_password: str, 
+            rsa_timestamp: str) -> dict:
+        return {
+            'password': encrypted_password,
+            'username': self.username,
+            'twofactorcode': generate_one_time_code(self.shared_secret),
+            'emailauth': '',
+            'loginfriendlyname': '',
+            'captchagid': '-1',
+            'captcha_text': '',
+            'emailsteamid': '',
+            'rsatimestamp': rsa_timestamp,
+            'remember_login': 'true',
+            'donotcache': str(int(time.time() * 1000))
+        }
