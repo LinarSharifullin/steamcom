@@ -25,6 +25,7 @@ class LoginExecutor:
         rsa_timestamp = rsa_params['rsa_timestamp']
         request_data = self._prepare_login_request_data(encrypted_password, 
             rsa_timestamp)
+        self._set_mobile_cookie()
         url = SteamUrl.COMMUNITY_URL + '/login/dologin'
         return self.session.post(url, data=request_data)
 
@@ -59,6 +60,10 @@ class LoginExecutor:
             "oauth_client_id": "DE45CD61",
             "oauth_scope": "read_profile write_profile read_client write_client",
         }
+    
+    def _set_mobile_cookie(self):
+        self.session.cookies.set('mobileClientVersion', '0 (2.1.3)')
+        self.session.cookies.set('mobileClient', 'android')
     
     @staticmethod
     def _check_for_captcha(login_response: requests.Response) -> None:
