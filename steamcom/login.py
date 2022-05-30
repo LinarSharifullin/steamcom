@@ -86,6 +86,7 @@ class LoginExecutor:
         session_id = generate_session_id()
         community_domain = SteamUrl.COMMUNITY_URL[8:]
         store_domain = SteamUrl.STORE_URL[8:]
-        self.session.cookies.set('sessionid', session_id, community_domain)
-        self.session.cookies.set('sessionid', session_id, store_domain)
+        self.session.cookies.set('sessionid', session_id, 
+            domain=community_domain)
+        self.session.cookies.set('sessionid', session_id, domain=store_domain)
 
