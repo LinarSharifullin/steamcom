@@ -63,11 +63,11 @@ class LoginExecutor:
             "oauth_scope": "read_profile write_profile read_client write_client",
         }
     
-    def _set_mobile_cookies(self):
+    def _set_mobile_cookies(self) -> None:
         self.session.cookies.set('mobileClientVersion', '0 (2.1.3)')
         self.session.cookies.set('mobileClient', 'android')
 
-    def _delete_mobile_cookies(self):
+    def _delete_mobile_cookies(self) -> None:
         self.session.cookies.pop('mobileClientVersion', None)
         self.session.cookies.pop('mobileClient', None)
 
