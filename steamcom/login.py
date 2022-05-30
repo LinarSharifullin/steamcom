@@ -25,7 +25,7 @@ class LoginExecutor:
         rsa_timestamp = rsa_params['rsa_timestamp']
         request_data = self._prepare_login_request_data(encrypted_password, 
             rsa_timestamp)
-        url = SteamUrl.STORE_URL + '/login/dologin'
+        url = SteamUrl.COMMUNITY_URL + '/login/dologin'
         return self.session.post(url, data=request_data)
 
     def _fetch_rsa_params(self) -> dict:
