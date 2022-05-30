@@ -1,4 +1,5 @@
 import rsa
+import base64
 
 import requests
 
@@ -23,3 +24,8 @@ class LoginExecutor:
         rsa_timestamp = key_response['timestamp']
         return {'rsa_key': rsa.PublicKey(rsa_mod, rsa_exp),
             'rsa_timestamp': rsa_timestamp}
+
+    def _encrypt_password(self, rsa_params: dict) -> str:
+        encoded_password = self.password.encode('utf-8')
+        encrypted_rsa = rsa.encrypt(encoded_password, rsa_params['rsa_key'])
+        return base64.b64encode(encrypted_rsa)
