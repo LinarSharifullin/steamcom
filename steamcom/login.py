@@ -6,7 +6,7 @@ import requests
 
 from steamcom.models import SteamUrl
 from steamcom.guard import generate_one_time_code
-from steamcom.exceptions import CaptchaRequired
+from steamcom.exceptions import CaptchaRequired, InvalidCredentials
 
 
 
@@ -64,3 +64,8 @@ class LoginExecutor:
     def _check_for_captcha(login_response: requests.Response) -> None:
         if login_response.json().get('captcha_needed', False):
             raise CaptchaRequired('Captcha required')
+
+    @staticmethod
+    def _assert_valid_credentials(login_response: requests.Response) -> None:
+        if not login_response.json()['success']:
+            raise InvalidCredentials(login_response.json()['message'])
