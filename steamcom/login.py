@@ -5,7 +5,7 @@ import time
 import requests
 
 from steamcom.models import SteamUrl
-from guard import generate_one_time_code
+from steamcom.guard import generate_one_time_code
 
 
 
