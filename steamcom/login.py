@@ -27,7 +27,9 @@ class LoginExecutor:
             rsa_timestamp)
         self._set_mobile_cookies()
         url = SteamUrl.COMMUNITY_URL + '/login/dologin'
-        return self.session.post(url, data=request_data)
+        response = self.session.post(url, data=request_data)
+        self._delete_mobile_cookies()
+        return response
 
     def _fetch_rsa_params(self) -> dict:
         key_response = self.session.post(SteamUrl.COMMUNITY_URL
@@ -64,7 +66,11 @@ class LoginExecutor:
     def _set_mobile_cookies(self):
         self.session.cookies.set('mobileClientVersion', '0 (2.1.3)')
         self.session.cookies.set('mobileClient', 'android')
-    
+
+    def _delete_mobile_cookies(self):
+        self.session.cookies.pop('mobileClientVersion', None)
+        self.session.cookies.pop('mobileClient', None)
+
     @staticmethod
     def _check_for_captcha(login_response: requests.Response) -> None:
         if login_response.json().get('captcha_needed', False):
