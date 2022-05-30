@@ -20,6 +20,13 @@ class LoginExecutor:
         self.shared_secret = shared_secret
         self.session = session
 
+    def login(self) -> requests.Session:
+        login_response = self._send_login_request()
+        self._check_for_captcha(login_response)
+        self._assert_valid_credentials(login_response)
+        self._set_sessionid_cookies()
+        return self.session
+
     def _send_login_request(self) -> requests.Response:
         rsa_params = self._fetch_rsa_params()
         encrypted_password = self._encrypt_password(rsa_params)
@@ -89,4 +96,3 @@ class LoginExecutor:
         self.session.cookies.set('sessionid', session_id, 
             domain=community_domain)
         self.session.cookies.set('sessionid', session_id, domain=store_domain)
-
