@@ -6,6 +6,7 @@ import requests
 
 from steamcom.models import SteamUrl
 from steamcom.guard import generate_one_time_code
+from steamcom.exceptions import CaptchaRequired
 
 
 
@@ -58,3 +59,8 @@ class LoginExecutor:
             "oauth_client_id": "DE45CD61",
             "oauth_scope": "read_profile write_profile read_client write_client",
         }
+    
+    @staticmethod
+    def _check_for_captcha(login_response: requests.Response) -> None:
+        if login_response.json().get('captcha_needed', False):
+            raise CaptchaRequired('Captcha required')
