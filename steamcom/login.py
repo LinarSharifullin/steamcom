@@ -45,5 +45,7 @@ class LoginExecutor:
             'emailsteamid': '',
             'rsatimestamp': rsa_timestamp,
             'remember_login': 'true',
-            'donotcache': str(int(time.time() * 1000))
+            'donotcache': str(int(time.time() * 1000)),
+            "oauth_client_id": "DE45CD61",
+            "oauth_scope": "read_profile write_profile read_client write_client",
         }
