@@ -28,3 +28,9 @@ class ConfirmationExecutor:
             'tag': tag_string
         }
         return params
+
+    def _fetch_confirmations_page(self) -> requests.Response:
+        tag = Tag.CONF.value
+        params = self._create_confirmation_params(tag)
+        response = self._session.get(self.CONF_URL + '/conf', params=params)
+        return response
