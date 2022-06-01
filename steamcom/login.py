@@ -22,7 +22,7 @@ class LoginExecutor:
         self.session = session
 
     def login(self) -> requests.Session:
-        login_response = self._send_login_request()
+        login_response = self._send_login_requests()
         self._check_for_captcha(login_response)
         self._assert_valid_credentials(login_response)
         oauth_data = json.loads(login_response.json()['oauth'])
