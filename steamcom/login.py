@@ -19,6 +19,7 @@ class LoginExecutor:
         self.username = username
         self.password = password
         self.shared_secret = shared_secret
+        self.steam_id = '' # added after login requests
         self.session = session
 
     def login(self) -> requests.Session:
@@ -26,10 +27,10 @@ class LoginExecutor:
         self._check_for_captcha(login_response)
         self._assert_valid_credentials(login_response)
         oauth_data = json.loads(login_response.json()['oauth'])
-        steam_id = oauth_data['steamid']
+        self.steam_id = oauth_data['steamid']
         wg_token = oauth_data['wgtoken']
         wg_token_secure = oauth_data['wgtoken_secure']
-        self._set_cookies(steam_id, wg_token, wg_token_secure)
+        self._set_cookies(wg_token, wg_token_secure)
         return self.session
 
     def _send_login_requests(self) -> requests.Response:
@@ -94,12 +95,11 @@ class LoginExecutor:
         if not login_response.json()['success']:
             raise InvalidCredentials(login_response.json()['message'])
 
-    def _set_cookies(self, steam_id: str, wg_token: str, 
-            wg_token_secure: str) -> None:
+    def _set_cookies(self, wg_token: str, wg_token_secure: str) -> None:
         session_id = generate_session_id()
         set_cookie = self.session.cookies.set
-        steam_login = steam_id + "%7C%7C" + wg_token
-        steam_login_secure = steam_id + "%7C%7C" + wg_token_secure
+        steam_login = self.steam_id + "%7C%7C" + wg_token
+        steam_login_secure = self.steam_id + "%7C%7C" + wg_token_secure
         for domain in (SteamUrl.COMMUNITY_URL[8:], SteamUrl.STORE_URL[8:]):
             set_cookie('sessionid', session_id, domain=domain)
             set_cookie('steamLogin',  steam_login, domain=domain)
