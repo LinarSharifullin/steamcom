@@ -1,13 +1,15 @@
 import requests
 import time
 
-from guard import generate_confirmation_key, generate_device_id
+from steamcom.guard import generate_confirmation_key, generate_device_id
+from steamcom.models import Tag
 
 
 class ConfirmationExecutor:
     CONF_URL = "https://steamcommunity.com/mobileconf"
 
-    def __init__(self, identity_secret: str, my_steam_id: str, session: requests.Session) -> None:
+    def __init__(self, identity_secret: str, my_steam_id: str, 
+            session: requests.Session) -> None:
         self._my_steam_id = my_steam_id
         self._identity_secret = identity_secret
         self._session = session
