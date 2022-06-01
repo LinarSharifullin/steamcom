@@ -21,7 +21,6 @@ def generate_one_time_code(shared_secret: str, timestamp: int = None) -> str:
 
     return code
 
-
 def generate_confirmation_key(identity_secret: str, tag: str,
         timestamp: int = int(time.time())) -> bytes:
     buffer = struct.pack('>Q', timestamp) + tag.encode('ascii')
