@@ -32,7 +32,7 @@ class LoginExecutor:
         self._set_cookies(steam_id, wg_token, wg_token_secure)
         return self.session
 
-    def _send_login_request(self) -> requests.Response:
+    def _send_login_requests(self) -> requests.Response:
         self._set_mobile_cookies()
         rsa_params = self._fetch_rsa_params()
         encrypted_password = self._encrypt_password(rsa_params)
