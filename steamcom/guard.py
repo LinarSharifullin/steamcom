@@ -28,3 +28,15 @@ def generate_confirmation_key(identity_secret: str, tag: str,
     hmac_identity_secret = hmac.new(base64_identity_secret, buffer,
         digestmod=sha1)
     return base64.b64encode(hmac_identity_secret.digest())
+
+def generate_device_id(steam_id: str) -> str:
+    """It works, however it's different that one generated from mobile app"""
+    hexed_steam_id = sha1(steam_id.encode('ascii')).hexdigest()
+    device_id = 'android:' + '-'.join([
+        hexed_steam_id[:8],
+        hexed_steam_id[8:12],
+        hexed_steam_id[12:16],
+        hexed_steam_id[16:20],
+        hexed_steam_id[20:32]
+    ])
+    return device_id
