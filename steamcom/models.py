@@ -9,7 +9,7 @@ class SteamUrl:
 
 class Confirmation:
     def __init__(self, _id, conf_type, creator, key, title, receiving, 
-            time, icon):
+            time, icon) -> None:
         self.id = _id.split('conf')[1]
         self.conf_type = conf_type
         self.creator = creator
