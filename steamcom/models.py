@@ -8,8 +8,9 @@ class SteamUrl:
 
 
 class Confirmation:
-    def __init__(self, conf_id, conf_type, data_accept, creator, key, title,
-            receiving, time, icon) -> None:
+    def __init__(self, conf_id: str, conf_type: str, data_accept: str, 
+            creator, key: str, title: str, receiving: str, time: str, 
+            icon: str) -> None:
         self.conf_id = conf_id
         self.conf_type = conf_type
         self.data_accept = data_accept
@@ -20,10 +21,10 @@ class Confirmation:
         self.time = time
         self.icon = icon
     
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Confirmation {self.title}'
     
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Confirmation {self.title}'
 
 
