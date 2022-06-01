@@ -1,3 +1,6 @@
+import enum
+
+
 class SteamUrl:
     API_URL = 'https://api.steampowered.com'
     COMMUNITY_URL = 'https://steamcommunity.com'
@@ -15,3 +18,10 @@ class Confirmation:
         self.receiving = receiving
         self.time = time
         self.icon = icon
+
+
+class Tag(enum.Enum):
+    CONF = 'conf'
+    DETAILS = 'details'
+    ALLOW = 'allow'
+    CANCEL = 'cancel'
