@@ -19,6 +19,12 @@ class Confirmation:
         self.receiving = receiving
         self.time = time
         self.icon = icon
+    
+    def __str__(self):
+        return f'Confirmation {self.title}'
+    
+    def __repr__(self):
+        return f'Confirmation {self.title}'
 
 
 class Tag(enum.Enum):
