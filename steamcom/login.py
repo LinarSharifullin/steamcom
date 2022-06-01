@@ -33,12 +33,12 @@ class LoginExecutor:
         return self.session
 
     def _send_login_request(self) -> requests.Response:
+        self._set_mobile_cookies()
         rsa_params = self._fetch_rsa_params()
         encrypted_password = self._encrypt_password(rsa_params)
         rsa_timestamp = rsa_params['rsa_timestamp']
         request_data = self._prepare_login_request_data(encrypted_password, 
             rsa_timestamp)
-        self._set_mobile_cookies()
         url = SteamUrl.COMMUNITY_URL + '/login/dologin'
         response = self.session.post(url, data=request_data)
         self._delete_mobile_cookies()
