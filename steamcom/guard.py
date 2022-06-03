@@ -21,8 +21,8 @@ def generate_one_time_code(shared_secret: str) -> str:
 
     return code
 
-def generate_confirmation_key(identity_secret: str, tag: str,
-        timestamp: int = int(time.time())) -> bytes:
+def generate_confirmation_key(identity_secret: str, tag: str) -> bytes:
+    timestamp = int(time.time())
     buffer = struct.pack('>Q', timestamp) + tag.encode('ascii')
     base64_identity_secret = base64.b64decode(identity_secret)
     hmac_identity_secret = hmac.new(base64_identity_secret, buffer,
