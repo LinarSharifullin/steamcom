@@ -1,7 +1,7 @@
-import requests
 import time
 from typing import List
 
+import requests
 from bs4 import BeautifulSoup
 
 from steamcom.guard import generate_confirmation_key, generate_device_id
