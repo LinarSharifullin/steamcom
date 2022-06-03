@@ -31,7 +31,7 @@ class LoginExecutor:
         wg_token = oauth_data['wgtoken']
         wg_token_secure = oauth_data['wgtoken_secure']
         self._set_cookies(wg_token, wg_token_secure)
-        return self.session
+        return self.session, self.steam_id
 
     def _send_login_requests(self) -> requests.Response:
         self._set_mobile_cookies()
