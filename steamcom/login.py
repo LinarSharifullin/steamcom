@@ -109,5 +109,5 @@ class LoginExecutor:
 
     @staticmethod
     def _generate_session_id() -> str:
-        sha1_hash = SHA1.new(sha1_hash(urandom(32))).digest()
+        sha1_hash = SHA1.new(urandom(32)).digest()
         return hexlify(sha1_hash)[:32].decode('ascii')
