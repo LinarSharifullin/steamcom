@@ -5,8 +5,8 @@ import struct
 from hashlib import sha1
 
 
-def generate_one_time_code(shared_secret: str, timestamp: int = None) -> str:
-    timestamp = int(time.time()) if timestamp == None else timestamp
+def generate_one_time_code(shared_secret: str) -> str:
+    timestamp = int(time.time())
     time_buffer = struct.pack('>Q', timestamp // 30)  # pack as Big endian, uint64
     time_hmac = hmac.new(base64.b64decode(shared_secret), time_buffer, 
         digestmod=sha1).digest()
