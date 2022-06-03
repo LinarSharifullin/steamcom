@@ -2,14 +2,15 @@ import rsa
 import base64
 import time
 import json
+from binascii import hexlify
+from Cryptodome.Hash import SHA1
+from os import urandom
 
 import requests
 
 from steamcom.models import SteamUrl
 from steamcom.guard import generate_one_time_code
 from steamcom.exceptions import CaptchaRequired, InvalidCredentials
-from steamcom.utils import generate_session_id
-
 
 
 class LoginExecutor:
@@ -96,7 +97,7 @@ class LoginExecutor:
             raise InvalidCredentials(login_response.json()['message'])
 
     def _set_cookies(self, wg_token: str, wg_token_secure: str) -> None:
-        session_id = generate_session_id()
+        session_id = self._generate_session_id()
         set_cookie = self.session.cookies.set
         steam_login = self.steam_id + "%7C%7C" + wg_token
         steam_login_secure = self.steam_id + "%7C%7C" + wg_token_secure
@@ -105,3 +106,8 @@ class LoginExecutor:
             set_cookie('steamLogin',  steam_login, domain=domain)
             set_cookie('steamLoginSecure', steam_login_secure, domain=domain,
                 secure=True)
+
+    @staticmethod
+    def _generate_session_id() -> str:
+        sha1_hash = SHA1.new(sha1_hash(urandom(32))).digest()
+        return hexlify(sha1_hash)[:32].decode('ascii')
