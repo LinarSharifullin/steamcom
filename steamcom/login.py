@@ -14,13 +14,13 @@ from steamcom.utils import generate_session_id
 
 class LoginExecutor:
 
-    def __init__(self, username: str, password: str, shared_secret: str,
-            session: requests.Session) -> None:
+    def __init__(self, username: str, password: str, 
+            shared_secret: str) -> None:
         self.username = username
         self.password = password
         self.shared_secret = shared_secret
         self.steam_id = '' # added after login requests
-        self.session = session
+        self.session = requests.Session()
 
     def login(self) -> requests.Session:
         login_response = self._send_login_requests()
