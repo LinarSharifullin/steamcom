@@ -11,11 +11,11 @@ from steamcom.models import Tag, Confirmation
 class ConfirmationExecutor:
     CONF_URL = "https://steamcommunity.com/mobileconf"
 
-    def __init__(self, identity_secret: str, my_steam_id: str, 
+    def __init__(self, identity_secret: str, steam_id: str,
             session: requests.Session) -> None:
-        self._my_steam_id = my_steam_id
-        self._identity_secret = identity_secret
-        self._session = session
+        self.steam_id = steam_id
+        self.identity_secret = identity_secret
+        self.session = session
 
     def get_confirmations(self) -> List[Confirmation]:
         confirmations = []
@@ -45,9 +45,8 @@ class ConfirmationExecutor:
     def _fetch_confirmations_page(self) -> requests.Response:
         tag = Tag.CONF.value
         params = self._create_confirmation_params(tag)
-        response = self._session.get(self.CONF_URL + '/conf', params=params)
+        response = self.session.get(self.CONF_URL + '/conf', params=params)
         return response
-
 
     def _create_confirmation_params(self, tag_string: str) -> dict:
         timestamp = int(time.time())
