@@ -19,7 +19,7 @@ class LoginExecutor:
         self.username = username
         self.password = password
         self.shared_secret = shared_secret
-        self.steam_id = '' # added after login requests
+        self.steam_id = '' # will be added after login requests
         self.session = requests.Session()
 
     def login(self) -> requests.Session:
