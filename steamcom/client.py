@@ -12,16 +12,16 @@ class SteamClient:
         self.session = None # will be added after login
         self.steam_id = '' # will be added after login
         self.confirmations = None # will be added after login
-        self.was_login_executed = False
+        self._was_login_executed = False
     
     def __str__(self) -> str:
-        if self.was_login_executed == True:
+        if self._was_login_executed == True:
             return f'SteamClient: {self.username}'
         else:
             return 'Empty SteamClient object'
     
     def __repr__(self) -> str:
-        if self.was_login_executed == True:
+        if self._was_login_executed == True:
             return f'SteamClient: {self.username}'
         else:
             return 'Empty SteamClient object'
@@ -36,4 +36,5 @@ class SteamClient:
         self.session, self.steam_id = login_executor.login()
         self.confirmations = ConfirmationExecutor(identity_secret, 
             self.steam_id, self.session)
-        self.was_login_executed = True
+        self._was_login_executed = True
+        self.confirmations._was_login_executed = True

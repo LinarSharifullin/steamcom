@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 
 from steamcom.guard import generate_confirmation_key, generate_device_id
 from steamcom.models import Tag, Confirmation
+from steamcom.utils import login_required
 
 
 class ConfirmationExecutor:
@@ -16,7 +17,9 @@ class ConfirmationExecutor:
         self.steam_id = steam_id
         self.identity_secret = identity_secret
         self.session = session
+        self._was_login_executed = False
 
+    @login_required
     def respond_to_confirmation(self, confirmation: Confirmation, 
             cancel: bool = False) -> bool:
         tag = Tag.ALLOW if cancel == False else Tag.CANCEL
@@ -28,6 +31,7 @@ class ConfirmationExecutor:
             params=params)
         return response.json()['success']
 
+    @login_required
     def respond_to_confirmations(self, confirmations: List[Confirmation], 
             cancel: bool = False) -> bool:
         tag = Tag.ALLOW if cancel == False else Tag.CANCEL
@@ -39,6 +43,7 @@ class ConfirmationExecutor:
             data=params)
         return response.json()['success']
 
+    @login_required
     def get_confirmations(self) -> List[Confirmation]:
         confirmations = []
         confirmations_page = self._fetch_confirmations_page()

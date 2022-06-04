@@ -4,3 +4,6 @@ class InvalidCredentials(Exception):
 
 class CaptchaRequired(Exception):
     pass
+
+class LoginRequired(Exception):
+    pass
