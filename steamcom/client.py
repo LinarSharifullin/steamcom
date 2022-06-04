@@ -16,13 +16,13 @@ class SteamClient:
     
     def __str__(self) -> str:
         if self.was_login_executed == True:
-            return f'Account: {self.username}'
+            return f'SteamClient: {self.username}'
         else:
             return 'Empty SteamClient object'
     
     def __repr__(self) -> str:
         if self.was_login_executed == True:
-            return f'Account: {self.username}'
+            return f'SteamClient: {self.username}'
         else:
             return 'Empty SteamClient object'
 
