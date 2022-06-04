@@ -1,5 +1,7 @@
 from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
+from steamcom.utils import login_required
+from steamcom.models import SteamUrl
 
 
 class SteamClient:
@@ -38,3 +40,9 @@ class SteamClient:
             self.steam_id, self.session)
         self._was_login_executed = True
         self.confirmations._was_login_executed = True
+
+    @login_required
+    def is_session_alive(self):
+        steam_login = self.username
+        main_page_response = self.session.get(SteamUrl.COMMUNITY_URL)
+        return steam_login.lower() in main_page_response.text.lower()
