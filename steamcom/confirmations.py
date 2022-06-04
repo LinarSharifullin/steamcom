@@ -17,6 +17,17 @@ class ConfirmationExecutor:
         self.identity_secret = identity_secret
         self.session = session
 
+    def respond_to_confirmation(self, confirmation: Confirmation, 
+            cancel: bool = False) -> bool:
+        tag = Tag.ALLOW if cancel == False else Tag.CANCEL
+        params = self._create_confirmation_params(tag.value)
+        params['op'] = tag.value
+        params['ck'] = confirmation.key
+        params['cid'] = confirmation.conf_id
+        response = self.session.get(self.CONF_URL + '/ajaxop', 
+            params=params)
+        return response.json()['success']
+
     def respond_to_confirmations(self, confirmations: List[Confirmation], 
             cancel: bool = False) -> bool:
         tag = Tag.ALLOW if cancel == False else Tag.CANCEL
