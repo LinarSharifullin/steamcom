@@ -13,6 +13,18 @@ class SteamClient:
         self.steam_id = '' # will be added after login
         self.confirmations = None # will be added after login
         self.was_login_executed = False
+    
+    def __str__(self) -> str:
+        if self.was_login_executed == True:
+            return f'Account: {self.username}'
+        else:
+            return 'Empty SteamClient object'
+    
+    def __repr__(self) -> str:
+        if self.was_login_executed == True:
+            return f'Account: {self.username}'
+        else:
+            return 'Empty SteamClient object'
 
     def login(self, username: str, password: str, shared_secret: str,
             identity_secret: str) -> None:
