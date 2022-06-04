@@ -22,10 +22,10 @@ class Confirmation:
         self.icon = icon
     
     def __str__(self) -> str:
-        return f'Confirmation {self.title}'
+        return f'Confirmation: {self.title}'
     
     def __repr__(self) -> str:
-        return f'Confirmation {self.title}'
+        return f'Confirmation: {self.title}'
 
 
 class Tag(enum.Enum):
