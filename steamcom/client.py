@@ -1,3 +1,7 @@
+from steamcom.login import LoginExecutor
+from steamcom.confirmations import ConfirmationExecutor
+
+
 class SteamClient:
 
     def __init__(self) -> None:
@@ -10,3 +14,14 @@ class SteamClient:
         self.confirmations = None # will be added after login
         self.was_login_executed = False
 
+    def login(self, username: str, password: str, shared_secret: str,
+            identity_secret: str) -> None:
+        self.username = username
+        self.password = password
+        self.shared_secret = shared_secret
+        self.identity_secret = identity_secret
+        login_executor = LoginExecutor(username, password, shared_secret)
+        self.session, self.steam_id = login_executor.login()
+        self.confirmations = ConfirmationExecutor(identity_secret, 
+            self.steam_id, self.session)
+        self.was_login_executed = True
