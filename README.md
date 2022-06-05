@@ -1,4 +1,4 @@
-# Steamcom
+# steamcom
 At the moment `steamcom` can only login into Steam web version and work with confirmations: receive and  responsible for them
 
 ## Credits
