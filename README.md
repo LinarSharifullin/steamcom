@@ -12,7 +12,7 @@ pip install git+https://github.com/LinarSharifullin/steamcom
 ```
 
 # SteamClient Methods
-**login(username: str, password: str, shared_secret: str, identity_secret: str) -> None**
+**login() -> None**
 ```python
 from steamcom.client import SteamClient
 
@@ -22,8 +22,8 @@ password = '124567'
 shared_secret = 'zu+yLsdfjJRbg2FP+vsW+oNE='
 identity_secret = 'U+Rs50612sdflkHlZ86ffPzgs='
 
-steam_client = SteamClient()
-steam_client.login(username, password, shared_secret, identity_secret)
+steam_client = SteamClient(username, password, shared_secret, identity_secret)
+steam_client.login()
 print(steam_client.was_login_executed) # True
 print(steam_client) # SteamClient: GabeNewell
 ```
@@ -35,13 +35,13 @@ extracted_session = steam_client.extract_session()
 print(extracted_session) # {'steam_id': '76...82', 'sessionid': '4f...90', 'steamLogin': '76...85', 'steamLoginSecure': '76...52'}
 ```
 
-**load_session(username: str, password: str, shared_secret: str, identity_secret: str, extracted_session: dict) -> None**
+**load_session(extracted_session: dict) -> None**
 ```python
 from steamcom.client import SteamClient
 
 
-steam_client = SteamClient()
-steam_client.load_session(username, passowrd, shared_secret, identity_secret, extracted_session)
+steam_client = SteamClient(username, passowrd, shared_secret, identity_secret)
+steam_client.load_session(extracted_session)
 
 ```
 
