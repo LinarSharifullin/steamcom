@@ -4,7 +4,7 @@ from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
 from steamcom.utils import login_required
 from steamcom.models import SteamUrl
-from steamcom.exceptions import SessionIsInvalid
+from steamcom.exceptions import LoginAlreadyDone, SessionIsInvalid
 
 
 class SteamClient:
@@ -33,6 +33,8 @@ class SteamClient:
             return 'Empty SteamClient object'
 
     def login(self) -> None:
+        if self.was_login_executed == True:
+            raise LoginAlreadyDone()
         login_executor = LoginExecutor(self.username, self.password,
             self.shared_secret)
         self.session, self.steam_id = login_executor.login()
