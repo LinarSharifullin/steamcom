@@ -83,6 +83,13 @@ print(status) # True
 
 # guard module functions
 **generate_one_time_code(shared_secret: str) -> str**
+```python
+from steamcom.guard import generate_one_time_code
+
+
+secret_code = generate_one_time_code(shared_secret)
+print(secret_code) # KPI21
+```
 
 **generate_confirmation_key(identity_secret: str, tag: str) -> bytes**
 
