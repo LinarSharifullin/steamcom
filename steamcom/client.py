@@ -14,7 +14,7 @@ class SteamClient:
         self.password = ''
         self.shared_secret = ''
         self.identity_secret = ''
-        self.session = None # will be added after login
+        self.session = requests.Session()
         self.steam_id = '' # will be added after login
         self.confirmations = None # will be added after login
         self.was_login_executed = False
@@ -81,7 +81,6 @@ class SteamClient:
     def _load_session(self, extracted_session: dict) -> None:
         community_url = SteamUrl.COMMUNITY_URL[8:]
         store_url = SteamUrl.STORE_URL[8:]
-        self.session = requests.Session()
         set_cookie = self.session.cookies.set
         for key, value in extracted_session.items():
             unformatted_key = key.lower().replace('_', '')
