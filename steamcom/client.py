@@ -57,6 +57,6 @@ class SteamClient:
         main_page_response = self.session.get(SteamUrl.COMMUNITY_URL)
         return steam_login.lower() in main_page_response.text.lower()
 
-    def _change_login_executed_fields(self, status: bool):
+    def _change_login_executed_fields(self, status: bool) -> None:
         self._was_login_executed = status
         self.confirmations._was_login_executed = status
