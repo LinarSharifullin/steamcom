@@ -52,6 +52,8 @@ class SteamClient:
         return extracted_session
 
     def load_session(self, extracted_session: dict) -> None:
+        if self.was_login_executed == True:
+            raise LoginAlreadyDone()
         self._load_session(extracted_session)
         self._change_login_executed_fields(True)
         status = self.is_session_alive()
