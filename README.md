@@ -39,6 +39,7 @@ print(extracted_session) # {'steam_id': '76...82', 'sessionid': '4f...90', 'stea
 ```python
 from steamcom.client import SteamClient
 
+
 steam_client = SteamClient()
 steam_client.load_session(username, passowrd, shared_secret, identity_secret, extracted_session)
 
