@@ -16,6 +16,7 @@ pip install git+https://github.com/LinarSharifullin/steamcom
 ```python
 from steamcom.client import SteamClient
 
+
 username = 'GabeNewell'
 password = '124567'
 shared_secret = 'zu+yLsdfjJRbg2FP+vsW+oNE='
@@ -23,6 +24,7 @@ identity_secret = 'U+Rs50612sdflkHlZ86ffPzgs='
 
 steam_client = SteamClient()
 steam_client.login(username, password, shared_secret, identity_secret)
+print(steam_client.was_login_executed) # True
 print(steam_client) # SteamClient: GabeNewell
 ```
 
@@ -49,6 +51,21 @@ steam_client.load_session(username, passowrd, shared_secret, identity_secret, ex
 ```python
 confirmations = steam_client.confirmations.get_confirmations()
 print(confirmations) # [Confirmation: Sell - IDF, Confirmation: Sell - SWAT]
+```
+
+From Confirmation class you can get various details:
+```python
+first_confirmation = confirmations[0]
+print(first_confirmation.conf_id) # 11360346824
+print(first_confirmation.conf_type) # 3
+print(first_confirmation.data_accept) # Create Listing
+print(first_confirmation.creator) # 3792607079523295593
+print(first_confirmation.key) # 9359661368473990051
+print(first_confirmation.title) # Sell - IDF
+print(first_confirmation.receiving) # 200 pуб. (173,92 pуб.)
+print(first_confirmation.time) # Just now
+print(first_confirmation.icon) # https://community.akamai.steamstatic.com/economy/image/Iz...fKf/32fx32f
+
 ```
 
 **respond_to_confirmations(confirmations: List[Confirmation], cancel: bool = False) -> bool**
