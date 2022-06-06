@@ -38,11 +38,14 @@ class SteamClient:
         self.session, self.steam_id = login_executor.login()
         self.confirmations = ConfirmationExecutor(identity_secret, 
             self.steam_id, self.session)
-        self._was_login_executed = True
-        self.confirmations._was_login_executed = True
+        self._change_login_executed_fields(True)
 
     @login_required
     def is_session_alive(self) -> bool:
         steam_login = self.username
         main_page_response = self.session.get(SteamUrl.COMMUNITY_URL)
         return steam_login.lower() in main_page_response.text.lower()
+
+    def _change_login_executed_fields(self, status: bool):
+        self._was_login_executed = status
+        self.confirmations._was_login_executed = status
