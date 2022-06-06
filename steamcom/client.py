@@ -38,8 +38,6 @@ class SteamClient:
         login_executor = LoginExecutor(self.username, self.password,
             self.shared_secret)
         self.session, self.steam_id = login_executor.login()
-        self.confirmations = ConfirmationExecutor(self.identity_secret,
-            self.steam_id, self.session)
         self._change_login_executed_fields(True)
 
     @login_required
@@ -55,14 +53,10 @@ class SteamClient:
 
     def load_session(self, extracted_session: dict) -> None:
         self._load_session(extracted_session)
-        self.confirmations = ConfirmationExecutor(self.identity_secret,
-            self.steam_id, self.session)
         self._change_login_executed_fields(True)
         status = self.is_session_alive()
         if status == False:
             self._change_login_executed_fields(False)
-            self.confirmations = None
-            self.username = ''
             raise SessionIsInvalid()
 
     @login_required
@@ -90,5 +84,10 @@ class SteamClient:
                 set_cookie('steamLoginSecure', value, domain=store_url)
 
     def _change_login_executed_fields(self, status: bool) -> None:
+        if status == True:
+            self.confirmations = ConfirmationExecutor(self.identity_secret,
+                self.steam_id, self.session)
+        else:
+            self.confirmations = None
         self.was_login_executed = status
         self.confirmations.was_login_executed = status
