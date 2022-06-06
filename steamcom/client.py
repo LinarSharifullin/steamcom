@@ -41,6 +41,17 @@ class SteamClient:
         self._change_login_executed_fields(True)
 
     @login_required
+    def extract_session(self) -> dict:
+        cookies = self.session.cookies.get_dict()
+        extracted_session = {
+            'steam_id': self.steam_id,
+            'sessionid': cookies['sessionid'],
+            'steamLogin': cookies['steamLogin'],
+            'steamLoginSecure': cookies['steamLoginSecure']
+        }
+        return extracted_session
+
+    @login_required
     def is_session_alive(self) -> bool:
         steam_login = self.username
         main_page_response = self.session.get(SteamUrl.COMMUNITY_URL)
