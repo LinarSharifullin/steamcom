@@ -26,6 +26,22 @@ steam_client.login(username, password, shared_secret, identity_secret)
 print(steam_client) # SteamClient: GabeNewell
 ```
 
+**extract_session() -> dict**
+Needed to save the session, you can save it from json or txt and use it in the future
+```python
+extracted_session = steam_client.extract_session()
+print(extracted_session) # {'steam_id': '76...82', 'sessionid': '4f...90', 'steamLogin': '76...85', 'steamLoginSecure': '76...52'}
+```
+
+**load_session(username: str, password: str, shared_secret: str, identity_secret: str, extracted_session: dict) -> None**
+```python
+from steamcom.client import SteamClient
+
+steam_client = SteamClient()
+steam_client.load_session(username, passowrd, shared_secret, identity_secret, extracted_session)
+
+```
+
 **is_session_alive() -> bool**
 
 # ConfirmationExecutor Methods
