@@ -1,7 +1,10 @@
+import requests
+
 from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
 from steamcom.utils import login_required
 from steamcom.models import SteamUrl
+from steamcom.exceptions import SessionIsInvalid
 
 
 class SteamClient:
@@ -51,11 +54,48 @@ class SteamClient:
         }
         return extracted_session
 
+    def load_session(self, username: str, password: str, shared_secret: str,
+            identity_secret: str, extracted_session: dict) -> None:
+        self._load_session(extracted_session)
+        self.confirmations = ConfirmationExecutor(identity_secret, 
+            self.steam_id, self.session)
+        self._change_login_executed_fields(True)
+        self.username = username
+        status = self.is_session_alive()
+        if status == False:
+            self._change_login_executed_fields(False)
+            self.confirmations = None
+            self.username = ''
+            raise SessionIsInvalid()
+
+        self.password = password
+        self.shared_secret = shared_secret
+        self.identity_secret = identity_secret
+
     @login_required
     def is_session_alive(self) -> bool:
         steam_login = self.username
         main_page_response = self.session.get(SteamUrl.COMMUNITY_URL)
         return steam_login.lower() in main_page_response.text.lower()
+
+    def _load_session(self, extracted_session: dict) -> None:
+        community_url = SteamUrl.COMMUNITY_URL[8:]
+        store_url = SteamUrl.STORE_URL[8:]
+        self.session = requests.Session()
+        set_cookie = self.session.cookies.set
+        for key, value in extracted_session.items():
+            unformatted_key = key.lower().replace('_', '')
+            if unformatted_key == 'steamid':
+                self.steam_id = value
+            elif unformatted_key == 'sessionid':
+                set_cookie('sessionid', value, domain=community_url)
+                set_cookie('sessionid', value, domain=store_url)
+            elif unformatted_key == 'steamlogin':
+                set_cookie('steamLogin', value, domain=community_url)
+                set_cookie('steamLogin', value, domain=store_url)
+            elif unformatted_key == 'steamloginsecure':
+                set_cookie('steamLoginSecure', value, domain=community_url)
+                set_cookie('steamLoginSecure', value, domain=store_url)
 
     def _change_login_executed_fields(self, status: bool) -> None:
         self._was_login_executed = status

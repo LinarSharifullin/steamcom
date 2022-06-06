@@ -8,3 +8,7 @@ class CaptchaRequired(Exception):
 
 class LoginRequired(Exception):
     pass
+
+
+class SessionIsInvalid(Exception):
+    pass
