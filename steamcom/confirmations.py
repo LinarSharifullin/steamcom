@@ -17,7 +17,7 @@ class ConfirmationExecutor:
         self.steam_id = steam_id
         self.identity_secret = identity_secret
         self.session = session
-        self._was_login_executed = False
+        self.was_login_executed = False
 
     @login_required
     def respond_to_confirmation(self, confirmation: Confirmation, 
