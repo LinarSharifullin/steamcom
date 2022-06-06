@@ -9,11 +9,12 @@ from steamcom.exceptions import SessionIsInvalid
 
 class SteamClient:
 
-    def __init__(self) -> None:
-        self.username = ''
-        self.password = ''
-        self.shared_secret = ''
-        self.identity_secret = ''
+    def __init__(self, username: str = '', password: str = '', 
+            shared_secret: str = '', identity_secret: str = '') -> None:
+        self.username = username
+        self.password = password
+        self.shared_secret = shared_secret
+        self.identity_secret = identity_secret
         self.session = requests.Session()
         self.steam_id = '' # will be added after login
         self.confirmations = None # will be added after login
@@ -31,15 +32,11 @@ class SteamClient:
         else:
             return 'Empty SteamClient object'
 
-    def login(self, username: str, password: str, shared_secret: str,
-            identity_secret: str) -> None:
-        self.username = username
-        self.password = password
-        self.shared_secret = shared_secret
-        self.identity_secret = identity_secret
-        login_executor = LoginExecutor(username, password, shared_secret)
+    def login(self) -> None:
+        login_executor = LoginExecutor(self.username, self.password,
+            self.shared_secret)
         self.session, self.steam_id = login_executor.login()
-        self.confirmations = ConfirmationExecutor(identity_secret, 
+        self.confirmations = ConfirmationExecutor(self.identity_secret,
             self.steam_id, self.session)
         self._change_login_executed_fields(True)
 
@@ -54,23 +51,17 @@ class SteamClient:
         }
         return extracted_session
 
-    def load_session(self, username: str, password: str, shared_secret: str,
-            identity_secret: str, extracted_session: dict) -> None:
+    def load_session(self, extracted_session: dict) -> None:
         self._load_session(extracted_session)
-        self.confirmations = ConfirmationExecutor(identity_secret, 
+        self.confirmations = ConfirmationExecutor(self.identity_secret,
             self.steam_id, self.session)
         self._change_login_executed_fields(True)
-        self.username = username
         status = self.is_session_alive()
         if status == False:
             self._change_login_executed_fields(False)
             self.confirmations = None
             self.username = ''
             raise SessionIsInvalid()
-
-        self.password = password
-        self.shared_secret = shared_secret
-        self.identity_secret = identity_secret
 
     @login_required
     def is_session_alive(self) -> bool:
