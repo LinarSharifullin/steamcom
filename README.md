@@ -1,7 +1,7 @@
 # steamcom
 At the moment `steamcom` can only login into Steam web version and work with confirmations: receive and  responsible for them
 
-## Credits
+# Credits
 * [bukson](https://github.com/bukson) for the [steampy](https://github.com/bukson/steampy) library, in fact, I took more than 50% of the code from him
 * [rossengeorgiev](https://github.com/rossengeorgiev) for the [steam](https://github.com/ValvePython/steam) library, in it I looked at how to implement a mobile web session
 * [melvyn2](https://github.com/melvyn2) for the [PySteamAuth](https://github.com/melvyn2/PySteamAuth) program, his code helped me implement multiple confirmations
