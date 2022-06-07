@@ -4,7 +4,7 @@ from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
 from steamcom.utils import login_required
 from steamcom.models import SteamUrl
-from steamcom.exceptions import LoginAlreadyDone, SessionIsInvalid
+from steamcom.exceptions import LoginFailed, SessionIsInvalid
 
 
 class SteamClient:
@@ -34,7 +34,7 @@ class SteamClient:
 
     def login(self) -> None:
         if self.was_login_executed == True:
-            raise LoginAlreadyDone()
+            raise LoginFailed('You alrady have a session')
         login_executor = LoginExecutor(self.username, self.password,
             self.shared_secret)
         self.session, self.steam_id = login_executor.login()
@@ -53,7 +53,7 @@ class SteamClient:
 
     def load_session(self, extracted_session: dict) -> None:
         if self.was_login_executed == True:
-            raise LoginAlreadyDone()
+            raise LoginFailed('You alrady have a session')
         self._load_session(extracted_session)
         self._change_login_executed_fields(True)
         status = self.is_session_alive()

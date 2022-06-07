@@ -1,12 +1,4 @@
-class InvalidCredentials(Exception):
-    pass
-
-
-class LoginAlreadyDone(Exception):
-    pass
-
-
-class CaptchaRequired(Exception):
+class LoginFailed(Exception):
     pass
 
 
