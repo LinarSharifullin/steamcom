@@ -89,7 +89,7 @@ class SteamClient:
         if status == True:
             self.confirmations = ConfirmationExecutor(self.identity_secret,
                 self.steam_id, self.session)
-                self.was_login_executed = True
+            self.was_login_executed = True
         else:
             self.confirmations = None
         self.confirmations.was_login_executed = status
