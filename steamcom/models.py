@@ -28,6 +28,12 @@ class Confirmation:
         return f'Confirmation: {self.title}'
 
 
+class ConfirmationType(enum.Enum):
+    trade = '2' # Send offer and accept
+    create_listing = '3'
+    confirm = '6' # I saw in the mail change
+
+
 class Tag(enum.Enum):
     CONF = 'conf'
     DETAILS = 'details'
