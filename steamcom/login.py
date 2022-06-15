@@ -95,7 +95,7 @@ class LoginExecutor:
     def _assert_valid_credentials(login_response: requests.Response) -> None:
         if not login_response.json()['success']:
             message = login_response.json()['message']
-            raise LoginFailed(f'Invalid credentials {message}')
+            raise LoginFailed(f'{message}')
 
     def _set_cookies(self, wg_token: str, wg_token_secure: str) -> None:
         session_id = self._generate_session_id()
