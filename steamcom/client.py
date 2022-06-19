@@ -44,7 +44,7 @@ class SteamClient:
     def extract_session(self) -> dict:
         cookies = self.session.cookies.get_dict()
         extracted_session = {
-            'steam_id': self.steam_id,
+            'steamid': self.steam_id,
             'sessionid': cookies['sessionid'],
             'steamLogin': cookies['steamLogin'],
             'steamLoginSecure': cookies['steamLoginSecure']
