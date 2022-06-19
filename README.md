@@ -12,7 +12,7 @@ pip install git+https://github.com/LinarSharifullin/steamcom
 ```
 
 # SteamClient Methods
-**login() -> None**
+## login() -> None
 ```python
 from steamcom.client import SteamClient
 
@@ -28,27 +28,26 @@ print(steam_client.was_login_executed) # True
 print(steam_client) # SteamClient: GabeNewell
 ```
 
-**extract_session() -> dict**
+## extract_session() -> dict
 Needed to save the session, you can save it from json or txt and use it in the future
 ```python
 extracted_session = steam_client.extract_session()
 print(extracted_session) # {'steam_id': '76...82', 'sessionid': '4f...90', 'steamLogin': '76...85', 'steamLoginSecure': '76...52'}
 ```
 
-**load_session(extracted_session: dict) -> None**
+## load_session(extracted_session: dict) -> None
 ```python
 from steamcom.client import SteamClient
 
 
 steam_client = SteamClient(username, passowrd, shared_secret, identity_secret)
 steam_client.load_session(extracted_session)
-
 ```
 
-**is_session_alive() -> bool**
+## is_session_alive() -> bool
 
 # ConfirmationExecutor Methods
-**get_confirmations() -> List[Confirmation]**
+## get_confirmations() -> List[Confirmation]
 ```python
 confirmations = steam_client.confirmations.get_confirmations()
 print(confirmations) # [Confirmation: Sell - IDF, Confirmation: Sell - SWAT]
@@ -66,16 +65,15 @@ print(first_confirmation.title) # Sell - IDF
 print(first_confirmation.receiving) # 200 pуб. (173,92 pуб.)
 print(first_confirmation.time) # Just now
 print(first_confirmation.icon) # https://community.akamai.steamstatic.com/economy/image/Iz...fKf/32fx32f
-
 ```
 
-**respond_to_confirmations(confirmations: List[Confirmation], cancel: bool = False) -> bool**
+## respond_to_confirmations(confirmations: List[Confirmation], cancel: bool = False) -> bool
 ```python
 status = steam_client.confirmations.respond_to_confirmations(confirmations)
 print(status) # True
 ```
 
-**respond_to_confirmation(confirmation: Confirmation, cancel: bool = False) -> bool**
+## respond_to_confirmation(confirmation: Confirmation, cancel: bool = False) -> bool
 ```python
 first_confirmation = confirmations[0]
 status = steam_client.confirmations.respond_to_confirmation(first_confirmation)
@@ -83,7 +81,7 @@ print(status) # True
 ```
 
 # guard module functions
-**generate_one_time_code(shared_secret: str) -> str**
+## generate_one_time_code(shared_secret: str) -> str
 ```python
 from steamcom.guard import generate_one_time_code
 
@@ -92,6 +90,6 @@ secret_code = generate_one_time_code(shared_secret)
 print(secret_code) # KPI21
 ```
 
-**generate_confirmation_key(identity_secret: str, tag: str) -> bytes**
+## generate_confirmation_key(identity_secret: str, tag: str) -> bytes
 
-**generate_device_id(steam_id: str) -> str**
+## generate_device_id(steam_id: str) -> str
