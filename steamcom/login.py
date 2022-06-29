@@ -41,13 +41,13 @@ class LoginExecutor:
         rsa_timestamp = rsa_params['rsa_timestamp']
         request_data = self._prepare_login_request_data(encrypted_password, 
             rsa_timestamp)
-        url = SteamUrl.COMMUNITY_URL + '/login/dologin'
+        url = SteamUrl.COMMUNITY + '/login/dologin'
         response = self.session.post(url, data=request_data)
         self._delete_mobile_cookies()
         return response
 
     def _fetch_rsa_params(self) -> dict:
-        key_response = self.session.post(SteamUrl.COMMUNITY_URL
+        key_response = self.session.post(SteamUrl.COMMUNITY
             + '/login/getrsakey/', data={'username': self.username}).json()
         rsa_mod = int(key_response['publickey_mod'], 16)
         rsa_exp = int(key_response['publickey_exp'], 16)
@@ -102,7 +102,7 @@ class LoginExecutor:
         set_cookie = self.session.cookies.set
         steam_login = self.steam_id + "%7C%7C" + wg_token
         steam_login_secure = self.steam_id + "%7C%7C" + wg_token_secure
-        for domain in (SteamUrl.COMMUNITY_URL[8:], SteamUrl.STORE_URL[8:]):
+        for domain in (SteamUrl.COMMUNITY[8:], SteamUrl.STORE[8:]):
             set_cookie('sessionid', session_id, domain=domain)
             set_cookie('steamLogin',  steam_login, domain=domain)
             set_cookie('steamLoginSecure', steam_login_secure, domain=domain,

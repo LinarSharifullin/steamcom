@@ -64,12 +64,12 @@ class SteamClient:
     @login_required
     def is_session_alive(self) -> bool:
         steam_login = self.username
-        main_page_response = self.session.get(SteamUrl.COMMUNITY_URL)
+        main_page_response = self.session.get(SteamUrl.COMMUNITY)
         return steam_login.lower() in main_page_response.text.lower()
 
     def _load_session(self, extracted_session: dict) -> None:
-        community_url = SteamUrl.COMMUNITY_URL[8:]
-        store_url = SteamUrl.STORE_URL[8:]
+        community_url = SteamUrl.COMMUNITY[8:]
+        store_url = SteamUrl.STORE[8:]
         set_cookie = self.session.cookies.set
         for key, value in extracted_session.items():
             unformatted_key = key.lower().replace('_', '')

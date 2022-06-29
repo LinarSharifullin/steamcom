@@ -2,9 +2,9 @@ import enum
 
 
 class SteamUrl:
-    API_URL = 'https://api.steampowered.com'
-    COMMUNITY_URL = 'https://steamcommunity.com'
-    STORE_URL = 'https://store.steampowered.com'
+    API = 'https://api.steampowered.com'
+    COMMUNITY = 'https://steamcommunity.com'
+    STORE = 'https://store.steampowered.com'
 
 
 class Confirmation:
