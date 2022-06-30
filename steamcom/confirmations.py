@@ -39,8 +39,8 @@ class ConfirmationExecutor:
             else ConfirmationTag.CANCEL
         params = self._create_confirmation_params(tag)
         params['op'] = tag
-        params['ck[]'] = str([i.key for i in confirmations])
-        params['cid[]'] = str([i.conf_id for i in confirmations])
+        params['ck[]'] = [i.key for i in confirmations]
+        params['cid[]'] = [i.conf_id for i in confirmations]
         response = self.session.post(self.CONF_URL + '/multiajaxop', 
             data=params)
         return response.json()['success']
