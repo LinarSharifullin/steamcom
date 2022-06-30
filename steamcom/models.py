@@ -1,4 +1,5 @@
 import enum
+from typing import NamedTuple
 
 
 class SteamUrl:
@@ -7,31 +8,28 @@ class SteamUrl:
     STORE = 'https://store.steampowered.com'
 
 
-class Confirmation:
-    def __init__(self, conf_id: str, conf_type: str, data_accept: str, 
-            creator, key: str, title: str, receiving: str, time: str, 
-            icon: str) -> None:
-        self.conf_id = conf_id
-        self.conf_type = conf_type
-        self.data_accept = data_accept
-        self.creator = creator
-        self.key = key
-        self.title = title
-        self.receiving = receiving
-        self.time = time
-        self.icon = icon
+class ConfirmationType(enum.Enum):
+    TRADE = 2 # Send offer and accept
+    CREATE_LISTING = 3
+    CONFIRM = 6 # I saw in the mail change
+
+
+class Confirmation(NamedTuple):
+    conf_id: str
+    conf_type: ConfirmationType
+    data_accept: str
+    creator: str
+    key: str
+    title: str
+    receiving: str
+    time: str
+    icon: str
     
     def __str__(self) -> str:
         return f'Confirmation: {self.title}'
     
     def __repr__(self) -> str:
         return f'Confirmation: {self.title}'
-
-
-class ConfirmationType(enum.Enum):
-    trade = '2' # Send offer and accept
-    create_listing = '3'
-    confirm = '6' # I saw in the mail change
 
 
 class Tag(enum.Enum):

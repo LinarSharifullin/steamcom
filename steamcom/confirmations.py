@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from steamcom.guard import generate_confirmation_key, generate_device_id
-from steamcom.models import Tag, Confirmation
+from steamcom.models import Tag, Confirmation, ConfirmationType
 from steamcom.utils import login_required
 
 
@@ -58,7 +58,7 @@ class ConfirmationExecutor:
             img = entry.select(".mobileconf_list_entry_icon img")[0]
             confirmations.append(Confirmation(
                 conf_id = entry['data-confid'],
-                conf_type = entry['data-type'],
+                conf_type = ConfirmationType(int(entry['data-type'])),
                 data_accept = entry['data-accept'],
                 creator = entry['data-creator'],
                 key = entry['data-key'],
