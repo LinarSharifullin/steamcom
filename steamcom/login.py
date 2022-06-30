@@ -5,12 +5,14 @@ import json
 from binascii import hexlify
 from Cryptodome.Hash import SHA1
 from os import urandom
+from typing import Union
 
 import requests
 
 from steamcom.models import SteamUrl
 from steamcom.guard import generate_one_time_code
 from steamcom.exceptions import LoginFailed
+from steamcom.utils import login_required
 
 
 class LoginExecutor:
@@ -36,9 +38,8 @@ class LoginExecutor:
 
     def _send_login_requests(self) -> requests.Response:
         self._set_mobile_cookies()
-        rsa_params = self._fetch_rsa_params()
-        encrypted_password = self._encrypt_password(rsa_params)
-        rsa_timestamp = rsa_params['rsa_timestamp']
+        rsa_key, rsa_timestamp = self._fetch_rsa_params()
+        encrypted_password = self._encrypt_password(rsa_key)
         request_data = self._prepare_login_request_data(encrypted_password, 
             rsa_timestamp)
         url = SteamUrl.COMMUNITY + '/login/dologin'
@@ -46,23 +47,24 @@ class LoginExecutor:
         self._delete_mobile_cookies()
         return response
 
-    def _fetch_rsa_params(self) -> dict:
+    def _fetch_rsa_params(self) -> tuple[rsa.key.PublicKey, str]:
         key_response = self.session.post(SteamUrl.COMMUNITY
             + '/login/getrsakey/', data={'username': self.username}).json()
         rsa_mod = int(key_response['publickey_mod'], 16)
         rsa_exp = int(key_response['publickey_exp'], 16)
         rsa_timestamp = key_response['timestamp']
-        return {'rsa_key': rsa.PublicKey(rsa_mod, rsa_exp),
-            'rsa_timestamp': rsa_timestamp}
+        return rsa.PublicKey(rsa_mod, rsa_exp), rsa_timestamp
 
-    def _encrypt_password(self, rsa_params: dict) -> str:
+    def _encrypt_password(self, rsa_key: rsa.key.PublicKey)\
+            -> bytes:
         encoded_password = self.password.encode('utf-8')
-        encrypted_rsa = rsa.encrypt(encoded_password, rsa_params['rsa_key'])
+        encrypted_rsa = rsa.encrypt(encoded_password, rsa_key)
         return base64.b64encode(encrypted_rsa)
     
-    def _prepare_login_request_data(self, encrypted_password: str, 
-            rsa_timestamp: str) -> dict:
-        return {
+    def _prepare_login_request_data(
+            self, encrypted_password: bytes, rsa_timestamp: str)\
+            -> dict[str, str]:
+        login_request_data =  {
             'password': encrypted_password,
             'username': self.username,
             'twofactorcode': generate_one_time_code(self.shared_secret),
@@ -77,6 +79,7 @@ class LoginExecutor:
             "oauth_client_id": "DE45CD61",
             "oauth_scope": "read_profile write_profile read_client write_client",
         }
+        return login_request_data
     
     def _set_mobile_cookies(self) -> None:
         self.session.cookies.set('mobileClientVersion', '0 (2.1.3)')

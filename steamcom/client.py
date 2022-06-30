@@ -1,3 +1,5 @@
+from typing import Mapping
+
 import requests
 
 from steamcom.login import LoginExecutor
@@ -17,7 +19,6 @@ class SteamClient:
         self.identity_secret = identity_secret
         self.session = requests.Session()
         self.steam_id = '' # will be added after login
-        self.confirmations = None # will be added after login
         self.was_login_executed = False
     
     def __str__(self) -> str:
@@ -51,7 +52,7 @@ class SteamClient:
         }
         return extracted_session
 
-    def load_session(self, extracted_session: dict) -> None:
+    def load_session(self, extracted_session: Mapping[str, str]) -> None:
         if self.was_login_executed == True:
             raise LoginFailed('You alrady have a session')
         self._load_session(extracted_session)
@@ -67,7 +68,7 @@ class SteamClient:
         main_page_response = self.session.get(SteamUrl.COMMUNITY)
         return steam_login.lower() in main_page_response.text.lower()
 
-    def _load_session(self, extracted_session: dict) -> None:
+    def _load_session(self, extracted_session: Mapping[str, str]) -> None:
         community_url = SteamUrl.COMMUNITY[8:]
         store_url = SteamUrl.STORE[8:]
         set_cookie = self.session.cookies.set

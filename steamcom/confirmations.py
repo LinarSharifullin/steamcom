@@ -1,5 +1,5 @@
 import time
-from typing import List
+from typing import Iterable
 
 import requests
 from bs4 import BeautifulSoup
@@ -20,7 +20,7 @@ class ConfirmationExecutor:
         self.was_login_executed = False
 
     @login_required
-    def respond_to_confirmation(self, confirmation: Confirmation, 
+    def respond_to_confirmation(self, confirmation: Confirmation,
             cancel: bool = False) -> bool:
         tag = ConfirmationTag.ALLOW if cancel == False\
             else ConfirmationTag.CANCEL
@@ -33,21 +33,21 @@ class ConfirmationExecutor:
         return response.json()['success']
 
     @login_required
-    def respond_to_confirmations(self, confirmations: List[Confirmation], 
+    def respond_to_confirmations(self, confirmations: Iterable[Confirmation],
             cancel: bool = False) -> bool:
         tag = ConfirmationTag.ALLOW if cancel == False\
             else ConfirmationTag.CANCEL
         params = self._create_confirmation_params(tag)
         params['op'] = tag
-        params['ck[]'] = [i.key for i in confirmations]
-        params['cid[]'] = [i.conf_id for i in confirmations]
+        params['ck[]'] = str([i.key for i in confirmations])
+        params['cid[]'] = str([i.conf_id for i in confirmations])
         response = self.session.post(self.CONF_URL + '/multiajaxop', 
             data=params)
         return response.json()['success']
 
     @login_required
-    def get_confirmations(self) -> List[Confirmation]:
-        confirmations = []
+    def get_confirmations(self) -> list[Confirmation]:
+        confirmations: list[Confirmation] = []
         confirmations_page = self._fetch_confirmations_page()
         soup = BeautifulSoup(confirmations_page.text, 'html.parser')
         if soup.select('#mobileconf_empty'):
@@ -77,7 +77,7 @@ class ConfirmationExecutor:
         response = self.session.get(self.CONF_URL + '/conf', params=params)
         return response
 
-    def _create_confirmation_params(self, tag: str) -> dict:
+    def _create_confirmation_params(self, tag: str) -> dict[str, str]:
         timestamp = int(time.time())
         confirmation_key = generate_confirmation_key(self.identity_secret, 
             tag)

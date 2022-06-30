@@ -15,7 +15,7 @@ class ConfirmationTag:
     CANCEL = 'cancel'
 
 
-class ConfirmationType(enum.Enum):
+class ConfirmationType(enum.IntEnum):
     TRADE = 2 # Send offer and accept
     CREATE_LISTING = 3
     CONFIRM = 6 # I saw in the mail change
