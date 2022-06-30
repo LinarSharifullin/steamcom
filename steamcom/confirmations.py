@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from steamcom.guard import generate_confirmation_key, generate_device_id
-from steamcom.models import Tag, Confirmation, ConfirmationType
+from steamcom.models import ConfirmationTag, Confirmation, ConfirmationType
 from steamcom.utils import login_required
 
 
@@ -22,9 +22,10 @@ class ConfirmationExecutor:
     @login_required
     def respond_to_confirmation(self, confirmation: Confirmation, 
             cancel: bool = False) -> bool:
-        tag = Tag.ALLOW if cancel == False else Tag.CANCEL
-        params = self._create_confirmation_params(tag.value)
-        params['op'] = tag.value
+        tag = ConfirmationTag.ALLOW if cancel == False\
+            else ConfirmationTag.CANCEL
+        params = self._create_confirmation_params(tag)
+        params['op'] = tag
         params['ck'] = confirmation.key
         params['cid'] = confirmation.conf_id
         response = self.session.get(self.CONF_URL + '/ajaxop', 
@@ -34,9 +35,10 @@ class ConfirmationExecutor:
     @login_required
     def respond_to_confirmations(self, confirmations: List[Confirmation], 
             cancel: bool = False) -> bool:
-        tag = Tag.ALLOW if cancel == False else Tag.CANCEL
-        params = self._create_confirmation_params(tag.value)
-        params['op'] = tag.value
+        tag = ConfirmationTag.ALLOW if cancel == False\
+            else ConfirmationTag.CANCEL
+        params = self._create_confirmation_params(tag)
+        params['op'] = tag
         params['ck[]'] = [i.key for i in confirmations]
         params['cid[]'] = [i.conf_id for i in confirmations]
         response = self.session.post(self.CONF_URL + '/multiajaxop', 
@@ -70,15 +72,15 @@ class ConfirmationExecutor:
         return confirmations
 
     def _fetch_confirmations_page(self) -> requests.Response:
-        tag = Tag.CONF.value
+        tag = ConfirmationTag.CONF
         params = self._create_confirmation_params(tag)
         response = self.session.get(self.CONF_URL + '/conf', params=params)
         return response
 
-    def _create_confirmation_params(self, tag_string: str) -> dict:
+    def _create_confirmation_params(self, tag: str) -> dict:
         timestamp = int(time.time())
         confirmation_key = generate_confirmation_key(self.identity_secret, 
-            tag_string)
+            tag)
         android_id = generate_device_id(self.steam_id)
         params = {
             'p': android_id,
@@ -86,6 +88,6 @@ class ConfirmationExecutor:
             'k': confirmation_key,
             't': timestamp,
             'm': 'android',
-            'tag': tag_string
+            'tag': tag
         }
         return params

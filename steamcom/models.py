@@ -8,6 +8,13 @@ class SteamUrl:
     STORE = 'https://store.steampowered.com'
 
 
+class ConfirmationTag:
+    CONF = 'conf'
+    DETAILS = 'details'
+    ALLOW = 'allow'
+    CANCEL = 'cancel'
+
+
 class ConfirmationType(enum.Enum):
     TRADE = 2 # Send offer and accept
     CREATE_LISTING = 3
@@ -30,10 +37,3 @@ class Confirmation(NamedTuple):
     
     def __repr__(self) -> str:
         return f'Confirmation: {self.title}'
-
-
-class Tag(enum.Enum):
-    CONF = 'conf'
-    DETAILS = 'details'
-    ALLOW = 'allow'
-    CANCEL = 'cancel'
