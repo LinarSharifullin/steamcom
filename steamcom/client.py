@@ -12,7 +12,7 @@ from steamcom.exceptions import LoginFailed, SessionIsInvalid
 class SteamClient:
 
     def __init__(self, username: str = '', password: str = '', 
-            shared_secret: str = '', identity_secret: str = '') -> None:
+                shared_secret: str = '', identity_secret: str = '') -> None:
         self.username = username
         self.password = password
         self.shared_secret = shared_secret

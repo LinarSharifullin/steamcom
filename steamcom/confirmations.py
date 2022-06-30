@@ -21,7 +21,7 @@ class ConfirmationExecutor:
 
     @login_required
     def respond_to_confirmation(self, confirmation: Confirmation,
-            cancel: bool = False) -> bool:
+                                cancel: bool = False) -> bool:
         tag = ConfirmationTag.ALLOW if cancel == False\
             else ConfirmationTag.CANCEL
         params = self._create_confirmation_params(tag)
@@ -34,7 +34,7 @@ class ConfirmationExecutor:
 
     @login_required
     def respond_to_confirmations(self, confirmations: Iterable[Confirmation],
-            cancel: bool = False) -> bool:
+                                cancel: bool = False) -> bool:
         tag = ConfirmationTag.ALLOW if cancel == False\
             else ConfirmationTag.CANCEL
         params = self._create_confirmation_params(tag)

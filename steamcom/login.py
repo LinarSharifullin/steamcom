@@ -1,24 +1,22 @@
-import rsa
 import base64
-import time
 import json
+import rsa
+import time
 from binascii import hexlify
 from Cryptodome.Hash import SHA1
 from os import urandom
-from typing import Union
 
 import requests
 
-from steamcom.models import SteamUrl
-from steamcom.guard import generate_one_time_code
 from steamcom.exceptions import LoginFailed
-from steamcom.utils import login_required
+from steamcom.guard import generate_one_time_code
+from steamcom.models import SteamUrl
 
 
 class LoginExecutor:
 
-    def __init__(self, username: str, password: str, 
-            shared_secret: str) -> None:
+    def __init__(self, username: str, password: str,
+                shared_secret: str) -> None:
         self.username = username
         self.password = password
         self.shared_secret = shared_secret
