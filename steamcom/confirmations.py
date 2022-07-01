@@ -30,7 +30,11 @@ class ConfirmationExecutor:
         params['cid'] = confirmation.conf_id
         response = self.session.get(self.CONF_URL + '/ajaxop', 
             params=params)
-        return response.json()['success']
+        try:
+            status = response.json()['success']
+        except requests.exceptions.JSONDecodeError:
+            status = False
+        return status
 
     @login_required
     def respond_to_confirmations(self, confirmations: Iterable[Confirmation],
@@ -43,7 +47,11 @@ class ConfirmationExecutor:
         params['cid[]'] = [i.conf_id for i in confirmations]
         response = self.session.post(self.CONF_URL + '/multiajaxop', 
             data=params)
-        return response.json()['success']
+        try:
+            status = response.json()['success']
+        except requests.exceptions.JSONDecodeError:
+            status = False
+        return status
 
     @login_required
     def get_confirmations(self) -> list[Confirmation]:
