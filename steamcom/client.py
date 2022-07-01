@@ -1,9 +1,11 @@
+from typing import Mapping
+
 import requests
 
 from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
 from steamcom.utils import login_required
-from steamcom.models import ExtractedSession, SteamUrl
+from steamcom.models import SteamUrl
 from steamcom.exceptions import LoginFailed, SessionIsInvalid
 
 
@@ -40,17 +42,17 @@ class SteamClient:
         self._change_login_executed_fields(True)
 
     @login_required
-    def extract_session(self) -> ExtractedSession:
+    def extract_session(self) -> dict[str, str]:
         cookies = self.session.cookies.get_dict()
-        extracted_session = ExtractedSession(
-            steam_id = self.steam_id,
-            session_id = cookies['sessionid'],
-            steam_login = cookies['steamLogin'],
-            steam_login_secure = cookies['steamLoginSecure']
-        )
+        extracted_session = {
+            'steamid': self.steam_id,
+            'sessionid': cookies['sessionid'],
+            'steamLogin': cookies['steamLogin'],
+            'steamLoginSecure': cookies['steamLoginSecure']
+        }
         return extracted_session
 
-    def load_session(self, extracted_session: ExtractedSession) -> None:
+    def load_session(self, extracted_session: Mapping[str, str]) -> None:
         if self.was_login_executed == True:
             raise LoginFailed('You alrady have a session')
         self._load_session(extracted_session)
@@ -66,18 +68,23 @@ class SteamClient:
         main_page_response = self.session.get(SteamUrl.COMMUNITY)
         return steam_login.lower() in main_page_response.text.lower()
 
-    def _load_session(self, extracted_session: ExtractedSession) -> None:
+    def _load_session(self, extracted_session: Mapping[str, str]) -> None:
         community_url = SteamUrl.COMMUNITY[8:]
         store_url = SteamUrl.STORE[8:]
         set_cookie = self.session.cookies.set
-        self.steam_id = extracted_session.steam_id
-        for domain in (community_url, store_url):
-            set_cookie('sessionid', extracted_session.session_id,
-                domain=domain)
-            set_cookie('steamLogin', extracted_session.steam_login,
-                domain=domain)
-            set_cookie('steamLoginSecure',
-                extracted_session.steam_login_secure, domain=domain)
+        for key, value in extracted_session.items():
+            unformatted_key = key.lower().replace('_', '')
+            if unformatted_key == 'steamid':
+                self.steam_id = value
+            elif unformatted_key == 'sessionid':
+                set_cookie('sessionid', value, domain=community_url)
+                set_cookie('sessionid', value, domain=store_url)
+            elif unformatted_key == 'steamlogin':
+                set_cookie('steamLogin', value, domain=community_url)
+                set_cookie('steamLogin', value, domain=store_url)
+            elif unformatted_key == 'steamloginsecure':
+                set_cookie('steamLoginSecure', value, domain=community_url)
+                set_cookie('steamLoginSecure', value, domain=store_url)
 
     def _change_login_executed_fields(self, status: bool) -> None:
         if status == True:

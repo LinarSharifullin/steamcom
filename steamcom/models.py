@@ -1,5 +1,4 @@
 import enum
-from dataclasses import dataclass
 from typing import NamedTuple
 
 
@@ -38,11 +37,3 @@ class Confirmation(NamedTuple):
     
     def __repr__(self) -> str:
         return f'Confirmation: {self.title}'
-
-
-@dataclass
-class ExtracedSession:
-    steam_id: str
-    session_id: str
-    steam_login: str
-    steam_login_secure: str
