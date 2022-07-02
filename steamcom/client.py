@@ -11,33 +11,33 @@ from steamcom.exceptions import LoginFailed, SessionIsInvalid
 
 class SteamClient:
 
-    def __init__(self, username: str = '', password: str = '', 
-                shared_secret: str = '', identity_secret: str = '') -> None:
+    def __init__(self, username: str = '', password: str = '',
+                 shared_secret: str = '', identity_secret: str = '') -> None:
         self.username = username
         self.password = password
         self.shared_secret = shared_secret
         self.identity_secret = identity_secret
         self.session = requests.Session()
-        self.steam_id = '' # will be added after login
+        self.steam_id = ''  # will be added after login
         self.was_login_executed = False
-    
+
     def __str__(self) -> str:
-        if self.was_login_executed == True:
+        if self.was_login_executed:
             return f'SteamClient: {self.username}'
         else:
             return 'Empty SteamClient object'
-    
+
     def __repr__(self) -> str:
-        if self.was_login_executed == True:
+        if self.was_login_executed:
             return f'SteamClient: {self.username}'
         else:
             return 'Empty SteamClient object'
 
     def login(self) -> None:
-        if self.was_login_executed == True:
+        if self.was_login_executed:
             raise LoginFailed('You alrady have a session')
-        login_executor = LoginExecutor(self.username, self.password,
-            self.shared_secret)
+        login_executor = LoginExecutor(
+            self.username, self.password, self.shared_secret)
         self.session, self.steam_id = login_executor.login()
         self._change_login_executed_fields(True)
 
@@ -53,12 +53,12 @@ class SteamClient:
         return extracted_session
 
     def load_session(self, extracted_session: Mapping[str, str]) -> None:
-        if self.was_login_executed == True:
+        if self.was_login_executed:
             raise LoginFailed('You alrady have a session')
         self._load_session(extracted_session)
         self._change_login_executed_fields(True)
         status = self.is_session_alive()
-        if status == False:
+        if status is False:
             self._change_login_executed_fields(False)
             raise SessionIsInvalid()
 
@@ -87,9 +87,9 @@ class SteamClient:
                 set_cookie('steamLoginSecure', value, domain=store_url)
 
     def _change_login_executed_fields(self, status: bool) -> None:
-        if status == True:
-            self.confirmations = ConfirmationExecutor(self.identity_secret,
-                self.steam_id, self.session)
+        if status:
+            self.confirmations = ConfirmationExecutor(
+                self.identity_secret, self.steam_id, self.session)
             self.confirmations.was_login_executed = True
         else:
             self.confirmations = None

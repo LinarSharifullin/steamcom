@@ -16,9 +16,9 @@ class ConfirmationTag:
 
 
 class ConfirmationType(enum.IntEnum):
-    TRADE = 2 # Send offer and accept
+    TRADE = 2  # Send offer and accept
     CREATE_LISTING = 3
-    CONFIRM = 6 # I saw in the mail change
+    CONFIRM = 6  # I saw in the mail change
 
 
 class Confirmation(NamedTuple):
@@ -31,9 +31,9 @@ class Confirmation(NamedTuple):
     receiving: str
     time: str
     icon: str
-    
+
     def __str__(self) -> str:
         return f'Confirmation: {self.title}'
-    
+
     def __repr__(self) -> str:
         return f'Confirmation: {self.title}'

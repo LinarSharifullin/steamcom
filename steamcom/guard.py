@@ -7,11 +7,12 @@ from hashlib import sha1
 
 def generate_one_time_code(shared_secret: str) -> str:
     timestamp = int(time.time())
-    time_buffer = struct.pack('>Q', timestamp // 30)  # pack as Big endian, uint64
-    time_hmac = hmac.new(base64.b64decode(shared_secret), time_buffer, 
-        digestmod=sha1).digest()
+    time_buffer = struct.pack('>Q', timestamp // 30)
+    time_hmac = hmac.new(
+        base64.b64decode(shared_secret), time_buffer, digestmod=sha1).digest()
     begin = ord(time_hmac[19:20]) & 0xf
-    full_code = struct.unpack('>I', time_hmac[begin:begin + 4])[0] & 0x7fffffff  # unpack as Big endian uint32
+    full_code = struct.unpack('>I', time_hmac[begin:begin + 4])[0]\
+        & 0x7fffffff
     chars = '23456789BCDFGHJKMNPQRTVWXY'
     code = ''
 
@@ -21,13 +22,15 @@ def generate_one_time_code(shared_secret: str) -> str:
 
     return code
 
+
 def generate_confirmation_key(identity_secret: str, tag: str) -> bytes:
     timestamp = int(time.time())
     buffer = struct.pack('>Q', timestamp) + tag.encode('ascii')
     base64_identity_secret = base64.b64decode(identity_secret)
-    hmac_identity_secret = hmac.new(base64_identity_secret, buffer,
-        digestmod=sha1)
+    hmac_identity_secret = hmac.new(
+        base64_identity_secret, buffer, digestmod=sha1)
     return base64.b64encode(hmac_identity_secret.digest())
+
 
 def generate_device_id(steam_id: str) -> str:
     """It works, however it's different that one generated from mobile app"""

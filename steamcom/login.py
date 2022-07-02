@@ -16,11 +16,11 @@ from steamcom.models import SteamUrl
 class LoginExecutor:
 
     def __init__(self, username: str, password: str,
-                shared_secret: str) -> None:
+                 shared_secret: str) -> None:
         self.username = username
         self.password = password
         self.shared_secret = shared_secret
-        self.steam_id = '' # will be added after login requests
+        self.steam_id = ''  # will be added after login requests
         self.session = requests.Session()
 
     def login(self) -> requests.Session:
@@ -38,16 +38,17 @@ class LoginExecutor:
         self._set_mobile_cookies()
         rsa_key, rsa_timestamp = self._fetch_rsa_params()
         encrypted_password = self._encrypt_password(rsa_key)
-        request_data = self._prepare_login_request_data(encrypted_password, 
-            rsa_timestamp)
+        request_data = self._prepare_login_request_data(
+            encrypted_password, rsa_timestamp)
         url = SteamUrl.COMMUNITY + '/login/dologin'
         response = self.session.post(url, data=request_data)
         self._delete_mobile_cookies()
         return response
 
     def _fetch_rsa_params(self) -> tuple[rsa.key.PublicKey, str]:
-        key_response = self.session.post(SteamUrl.COMMUNITY
-            + '/login/getrsakey/', data={'username': self.username}).json()
+        key_response = self.session.post(
+            SteamUrl.COMMUNITY + '/login/getrsakey/',
+            data={'username': self.username}).json()
         rsa_mod = int(key_response['publickey_mod'], 16)
         rsa_exp = int(key_response['publickey_exp'], 16)
         rsa_timestamp = key_response['timestamp']
@@ -58,11 +59,11 @@ class LoginExecutor:
         encoded_password = self.password.encode('utf-8')
         encrypted_rsa = rsa.encrypt(encoded_password, rsa_key)
         return base64.b64encode(encrypted_rsa)
-    
+
     def _prepare_login_request_data(
             self, encrypted_password: bytes, rsa_timestamp: str)\
             -> dict[str, str]:
-        login_request_data =  {
+        login_request_data = {
             'password': encrypted_password,
             'username': self.username,
             'twofactorcode': generate_one_time_code(self.shared_secret),
@@ -75,10 +76,11 @@ class LoginExecutor:
             'remember_login': 'true',
             'donotcache': str(int(time.time() * 1000)),
             "oauth_client_id": "DE45CD61",
-            "oauth_scope": "read_profile write_profile read_client write_client",
+            "oauth_scope": "read_profile write_profile read_client'\
+                            + 'write_client",
         }
         return login_request_data
-    
+
     def _set_mobile_cookies(self) -> None:
         self.session.cookies.set('mobileClientVersion', '0 (2.1.3)')
         self.session.cookies.set('mobileClient', 'android')
@@ -107,7 +109,7 @@ class LoginExecutor:
             set_cookie('sessionid', session_id, domain=domain)
             set_cookie('steamLogin',  steam_login, domain=domain)
             set_cookie('steamLoginSecure', steam_login_secure, domain=domain,
-                secure=True)
+                       secure=True)
 
     @staticmethod
     def _generate_session_id() -> str:
