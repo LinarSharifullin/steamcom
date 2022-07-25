@@ -16,12 +16,12 @@ from steamcom.models import SteamUrl
 class LoginExecutor:
 
     def __init__(self, username: str, password: str,
-                 shared_secret: str) -> None:
+                 shared_secret: str, session: requests.Session) -> None:
         self.username = username
         self.password = password
         self.shared_secret = shared_secret
         self.steam_id = ''  # will be added after login requests
-        self.session = requests.Session()
+        self.session = session
 
     def login(self) -> requests.Session:
         login_response = self._send_login_requests()
@@ -32,7 +32,7 @@ class LoginExecutor:
         wg_token = oauth_data['wgtoken']
         wg_token_secure = oauth_data['wgtoken_secure']
         self._set_cookies(wg_token, wg_token_secure)
-        return self.session, self.steam_id
+        return self.steam_id
 
     def _send_login_requests(self) -> requests.Response:
         self._set_mobile_cookies()

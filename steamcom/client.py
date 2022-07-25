@@ -37,8 +37,8 @@ class SteamClient:
         if self.was_login_executed:
             raise LoginFailed('You alrady have a session')
         login_executor = LoginExecutor(
-            self.username, self.password, self.shared_secret)
-        self.session, self.steam_id = login_executor.login()
+            self.username, self.password, self.shared_secret, self.session)
+        self.steam_id = login_executor.login()
         self._change_login_executed_fields(True)
 
     @login_required
