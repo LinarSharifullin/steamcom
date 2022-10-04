@@ -97,6 +97,14 @@ class SteamClient:
         self.was_login_executed = status
 
     @login_required
+    def get_my_inventory(self, app_id: str, context_id: str, count: int = 5000,
+                         start_asset_id: str = None,
+                         merge: bool = True) -> dict:
+        steam_id = self.steam_id
+        return self.get_partner_inventory(steam_id, app_id, context_id, count,
+                                          start_asset_id, merge)
+
+    @login_required
     def get_partner_inventory(self, partner_steam_id: str, app_id: str,
                               context_id: str, count: int = 5000,
                               start_asset_id: str = None,
