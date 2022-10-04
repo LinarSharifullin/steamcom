@@ -34,7 +34,11 @@ class Confirmation(NamedTuple):
     icon: str
 
     def __str__(self) -> str:
+        if not self.title:
+            return f'Unknown {self.conf_type.name}'
         return f'Confirmation: {self.title}'
 
     def __repr__(self) -> str:
+        if not self.title:
+            return f'Unknown {self.conf_type.name}'
         return f'Confirmation: {self.title}'
