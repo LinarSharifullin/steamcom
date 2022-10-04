@@ -9,6 +9,7 @@ from steamcom.utils import (login_required, parse_price,
                             merge_items_with_descriptions_from_inventory)
 from steamcom.models import SteamUrl
 from steamcom.exceptions import LoginFailed, SessionIsInvalid, ApiException
+from steamcom.market import SteamMarket
 
 
 class SteamClient:
@@ -22,6 +23,8 @@ class SteamClient:
         self.session = requests.Session()
         self.steam_id = ''  # will be added after login
         self.was_login_executed = False
+        self.confirmations = None
+        self.market = None
 
     def __str__(self) -> str:
         if self.was_login_executed:
@@ -93,8 +96,11 @@ class SteamClient:
             self.confirmations = ConfirmationExecutor(
                 self.identity_secret, self.steam_id, self.session)
             self.confirmations.was_login_executed = True
+            self.market = SteamMarket(self.steam_id, self.session)
+            self.market.was_login_executed = True
         else:
             self.confirmations = None
+            self.market = None
         self.was_login_executed = status
 
     @login_required
