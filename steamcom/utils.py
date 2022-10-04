@@ -1,4 +1,5 @@
 import copy
+import re
 from typing import List
 
 from steamcom.exceptions import LoginRequired
@@ -40,3 +41,10 @@ def merge_items(items: List[dict], descriptions: dict, **kwargs) -> dict:
 
 def get_description_key(item: dict) -> str:
     return item['classid'] + '_' + item['instanceid']
+
+
+def parse_price(price: str) -> float:
+    pattern = '\D?(\\d*)(\\.|,)?(\\d*)'
+    tokens = re.search(pattern, price, re.UNICODE)
+    decimal_str = tokens.group(1) + '.' + tokens.group(3)
+    return float(decimal_str)

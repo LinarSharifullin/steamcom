@@ -1,13 +1,14 @@
 from typing import Mapping
 
 import requests
+from bs4 import BeautifulSoup
 
 from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
-from steamcom.utils import login_required
+from steamcom.utils import (login_required, parse_price,
+                            merge_items_with_descriptions_from_inventory)
 from steamcom.models import SteamUrl
 from steamcom.exceptions import LoginFailed, SessionIsInvalid, ApiException
-from steamcom.utils import merge_items_with_descriptions_from_inventory
 
 
 class SteamClient:
@@ -132,3 +133,11 @@ class SteamClient:
             }
             return inventory
         return response_dict
+
+    @login_required
+    def get_wallet_balance(self) -> float:
+        url = SteamUrl.STORE + '/account/history/'
+        response = self.session.get(url)
+        response_soup = BeautifulSoup(response.text, "html.parser")
+        balance = response_soup.find(id='header_wallet_balance').string
+        return parse_price(balance)
