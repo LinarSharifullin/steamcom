@@ -76,7 +76,7 @@ class ConfirmationExecutor:
                 title=description[0].string,
                 receiving=description[1].string,
                 time=description[2].string,
-                icon=img['src'] if not img and img['src'] else "",
+                icon=img['src'] if img and img['src'] else "",
             ))
         return confirmations
 
