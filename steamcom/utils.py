@@ -1,3 +1,6 @@
+import copy
+from typing import List
+
 from steamcom.exceptions import LoginRequired
 
 
@@ -8,3 +11,32 @@ def login_required(func):
         else:
             return func(self, *args, **kwargs)
     return func_wrapper
+
+
+def merge_items_with_descriptions_from_inventory(inventory_response: dict,
+                                                 context_id: str) -> dict:
+    inventory = inventory_response.get('assets', [])
+    if not inventory:
+        return {}
+    descriptions = {}
+    for description in inventory_response['descriptions']:
+        descriptions[get_description_key(description)] = description
+    return merge_items(inventory, descriptions, context_id=context_id)
+
+
+def merge_items(items: List[dict], descriptions: dict, **kwargs) -> dict:
+    merged_items = {}
+    for item in items:
+        description_key = get_description_key(item)
+        description = copy.copy(descriptions[description_key])
+        item_id = item.get('id') or item['assetid']
+        description['contextid'] = item.get('contextid')\
+            or kwargs['context_id']
+        description['id'] = item_id
+        description['amount'] = item['amount']
+        merged_items[item_id] = description
+    return merged_items
+
+
+def get_description_key(item: dict) -> str:
+    return item['classid'] + '_' + item['instanceid']

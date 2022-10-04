@@ -6,7 +6,8 @@ from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
 from steamcom.utils import login_required
 from steamcom.models import SteamUrl
-from steamcom.exceptions import LoginFailed, SessionIsInvalid
+from steamcom.exceptions import LoginFailed, SessionIsInvalid, ApiException
+from steamcom.utils import merge_items_with_descriptions_from_inventory
 
 
 class SteamClient:
@@ -94,3 +95,32 @@ class SteamClient:
         else:
             self.confirmations = None
         self.was_login_executed = status
+
+    @login_required
+    def get_partner_inventory(self, partner_steam_id: str, app_id: str,
+                              context_id: str, count: int = 5000,
+                              start_asset_id: str = None,
+                              merge: bool = True) -> dict:
+        url = '/'.join([SteamUrl.COMMUNITY, 'inventory', partner_steam_id,
+                        app_id, context_id])
+        params = {'l': 'english',
+                  'count': count,
+                  'start_assetid': start_asset_id}
+        response_dict = self.session.get(url, params=params).json()
+        if response_dict['success'] != 1:
+            raise ApiException('Success value should be 1.')
+        if merge:
+            assets = merge_items_with_descriptions_from_inventory(
+                response_dict, context_id)
+            more_items = response_dict['more_items']\
+                if 'more_items' in response_dict else None
+            last_asset_id = response_dict['last_assetid']\
+                if 'last_assetid' in response_dict else None
+            inventory = {
+                'assets': assets,
+                'more_items': more_items,
+                'last_asset_id': last_asset_id,
+                'total_inventory_count': response_dict['total_inventory_count']
+            }
+            return inventory
+        return response_dict

@@ -8,3 +8,7 @@ class LoginRequired(Exception):
 
 class SessionIsInvalid(Exception):
     pass
+
+
+class ApiException(Exception):
+    pass
