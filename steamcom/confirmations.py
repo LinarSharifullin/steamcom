@@ -65,7 +65,8 @@ class ConfirmationExecutor:
         for entry in entries:
             description = entry.select(
                 ".mobileconf_list_entry_description > div")
-            img = entry.select(".mobileconf_list_entry_icon img")[0]
+            img_list = entry.select(".mobileconf_list_entry_icon img")
+            img = img_list[0] if img_list else None
             confirmations.append(Confirmation(
                 conf_id=entry['data-confid'],
                 conf_type=ConfirmationType(int(entry['data-type'])),
@@ -75,7 +76,7 @@ class ConfirmationExecutor:
                 title=description[0].string,
                 receiving=description[1].string,
                 time=description[2].string,
-                icon=img['src'] if len(img['src']) > 0 else "",
+                icon=img['src'] if not img and img['src'] else "",
             ))
         return confirmations
 
