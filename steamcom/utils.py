@@ -56,7 +56,7 @@ def get_description_key(item: dict) -> str:
 
 
 def parse_price(price: str) -> float:
-    pattern = '\D?(\\d*)(\\.|,)?(\\d*)'
+    pattern = r'\D?(\\d*)(\\.|,)?(\\d*)'
     tokens = re.search(pattern, price, re.UNICODE)
     decimal_str = tokens.group(1) + '.' + tokens.group(3)
     return float(decimal_str)
@@ -70,8 +70,8 @@ def text_between(text: str, begin: str, end: str) -> str:
 
 def get_listing_id_to_assets_address_from_html(html: str) -> dict:
     listing_id_to_assets_address = {}
-    regex = "CreateItemHoverFromContainer\( [\w]+, 'mylisting_([\d]+)_[\w]+'"
-    regex += ", ([\d]+), '([\d]+)', '([\d]+)', [\d]+ \);"
+    regex = r"CreateItemHoverFromContainer\( [\w]+, 'mylisting_([\d]+)_[\w]+'"
+    regex += r", ([\d]+), '([\d]+)', '([\d]+)', [\d]+ \);"
     for match in re.findall(regex, html):
         listing_id_to_assets_address[match[0]] = [
             str(match[1]), match[2], match[3]]
@@ -105,7 +105,7 @@ def get_market_sell_listings_from_api(html: str) -> dict:
 
 def get_sell_listings_from_node(node: Tag) -> dict:
     sell_listings_raw = node.findAll('div',
-                                     {'id': re.compile('mylisting_\d+')})
+                                     {'id': re.compile(r'mylisting_\d+')})
     sell_listings_dict = {}
     for listing_raw in sell_listings_raw:
         spans = listing_raw.select('span[title]')

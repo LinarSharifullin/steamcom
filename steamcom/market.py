@@ -91,7 +91,7 @@ class SteamMarket:
         return listings
 
     @login_required
-    def create_buy_order(self, app_id: str, market_hash_name: str, 
+    def create_buy_order(self, app_id: str, market_hash_name: str,
                          price_single_item: str, quantity: int) -> dict:
         data = {
             'sessionid': self.session.cookies.get_dict()['sessionid'],
