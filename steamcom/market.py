@@ -1,5 +1,7 @@
 import requests
 import json
+import urllib.parse
+from decimal import Decimal
 
 from steamcom.utils import (login_required, text_between,
                             get_listing_id_to_assets_address_from_html,
@@ -87,3 +89,22 @@ class SteamMarket:
                         **listings['sell_listings'],
                         **listings_2['sell_listings']}
         return listings
+
+    @login_required
+    def create_buy_order(self, app_id: str, market_hash_name: str, 
+                         price_single_item: str, quantity: int) -> dict:
+        data = {
+            'sessionid': self.session.cookies.get_dict()['sessionid'],
+            'currency': self.currency_id,
+            'appid': app_id,
+            'market_hash_name': market_hash_name,
+            'price_total': str(Decimal(price_single_item) * Decimal(quantity)),
+            'quantity': quantity
+        }
+        url_name = urllib.parse.quote(market_hash_name)
+        referer = f'{SteamUrl.COMMUNITY}/market/listings/{app_id}/{url_name}'
+        headers = {'Referer': referer}
+        response = self.session.post(
+            SteamUrl.COMMUNITY + "/market/createbuyorder/", data,
+            headers=headers).json()
+        return response
