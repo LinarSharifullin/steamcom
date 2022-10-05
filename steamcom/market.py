@@ -12,9 +12,10 @@ from steamcom.exceptions import ApiException
 
 class SteamMarket:
 
-    def __init__(self, steam_id: str = '',
+    def __init__(self, steam_id: str = '', currency_id: int = None,
                  session: requests.Session = requests.Session()) -> None:
         self.steam_id = steam_id
+        self.currency_id = currency_id
         self.session = session
         self.was_login_executed = False
 
@@ -29,7 +30,7 @@ class SteamMarket:
 
     @login_required
     def get_my_market_listings(self) -> dict:
-        response = self.session.get('%s/market' % SteamUrl.COMMUNITY)
+        response = self.session.get(SteamUrl.COMMUNITY + '/market')
         if response.status_code != 200:
             text = 'Problem getting the listings. http code: {}'
             raise ApiException(text.format(response.status_code))

@@ -1,3 +1,4 @@
+import re
 from typing import Mapping
 
 import requests
@@ -22,6 +23,7 @@ class SteamClient:
         self.identity_secret = identity_secret
         self.session = requests.Session()
         self.steam_id = ''  # will be added after login
+        self.currency_id = None  # will be added after login
         self.was_login_executed = False
         self.confirmations = None
         self.market = None
@@ -44,6 +46,7 @@ class SteamClient:
         login_executor = LoginExecutor(
             self.username, self.password, self.shared_secret, self.session)
         self.steam_id = login_executor.login()
+        self.currency_id = self.get_my_currency_id()
         self._change_login_executed_fields(True)
 
     @login_required
@@ -51,6 +54,7 @@ class SteamClient:
         cookies = self.session.cookies.get_dict()
         extracted_session = {
             'steamid': self.steam_id,
+            'currencyid': self.currency_id,
             'sessionid': cookies['sessionid'],
             'steamLogin': cookies['steamLogin'],
             'steamLoginSecure': cookies['steamLoginSecure']
@@ -81,6 +85,8 @@ class SteamClient:
             unformatted_key = key.lower().replace('_', '')
             if unformatted_key == 'steamid':
                 self.steam_id = value
+            elif unformatted_key == 'currencyid':
+                self.currency_id = value
             elif unformatted_key == 'sessionid':
                 set_cookie('sessionid', value, domain=community_url)
                 set_cookie('sessionid', value, domain=store_url)
@@ -96,12 +102,18 @@ class SteamClient:
             self.confirmations = ConfirmationExecutor(
                 self.identity_secret, self.steam_id, self.session)
             self.confirmations.was_login_executed = True
-            self.market = SteamMarket(self.steam_id, self.session)
+            self.market = SteamMarket(self.steam_id, self.currency_id,
+                                      self.session)
             self.market.was_login_executed = True
         else:
             self.confirmations = None
             self.market = None
         self.was_login_executed = status
+
+    def get_my_currency_id(self) -> int:
+        response = self.session.get(SteamUrl.COMMUNITY + '/market/')
+        part_with_currency = re.search('wallet_currency":\d+', response.text)
+        return int(re.search('\d+', part_with_currency[0])[0])
 
     @login_required
     def get_my_inventory(self, app_id: str, context_id: str, count: int = 5000,
