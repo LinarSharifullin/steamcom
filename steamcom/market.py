@@ -125,3 +125,13 @@ class SteamMarket:
         response = self.session.post(SteamUrl.COMMUNITY + "/market/sellitem/",
                                      data, headers=headers).json()
         return response
+
+    @login_required
+    def cancel_sell_order(self, sell_listing_id: str) -> None:
+        url = f'{SteamUrl.COMMUNITY}/market/removelisting/{sell_listing_id}'
+        data = {"sessionid": self.session.cookies.get_dict()['sessionid']}
+        headers = {'Referer': SteamUrl.COMMUNITY + "/market/"}
+        response = self.session.post(url, data=data, headers=headers)
+        if response.status_code != 200:
+            text = 'Problem removing the listing. http code: '
+            raise ApiException(text + response.status_code)
