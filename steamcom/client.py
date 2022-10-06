@@ -151,7 +151,7 @@ class SteamClient:
                   'count': count,
                   'start_assetid': start_asset_id}
         response_dict = self.session.get(url, params=params).json()
-        if response_dict['success'] != 1:
+        if 'success' not in response_dict or response_dict['success'] != 1:
             raise ApiException('Success value should be 1.')
         assets = merge_items_with_descriptions_from_inventory(
             response_dict, context_id)
