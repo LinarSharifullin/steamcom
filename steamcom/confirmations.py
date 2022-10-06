@@ -100,3 +100,14 @@ class ConfirmationExecutor:
             'tag': tag
         }
         return params
+
+    @login_required
+    def allow_all_confirmations(self, types: Iterable[ConfirmationType],
+                                delay=3) -> None:
+        confirmations = self.get_confirmations()
+        time.sleep(delay)
+        selected_confirmations = []
+        for confirmation in confirmations:
+            if confirmation.conf_type in types:
+                selected_confirmations.append(confirmation)
+        self.respond_to_confirmations(selected_confirmations)
