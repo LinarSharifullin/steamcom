@@ -1,4 +1,5 @@
 import re
+import time
 from typing import Mapping
 
 import requests
@@ -123,11 +124,30 @@ class SteamClient:
         return self.get_partner_inventory(steam_id, app_id, context_id, count,
                                           start_asset_id, merge)
 
-    @login_required
     def get_partner_inventory(self, partner_steam_id: str, app_id: str,
-                              context_id: str, count: int = 5000,
-                              start_asset_id: str = None,
-                              merge: bool = True) -> dict:
+                              context_id: str, delay=3) -> dict:
+        start_asset_id = None
+        full_inventory = {}
+        while True:
+            inventory = self.get_inventory_page(
+                partner_steam_id, app_id, context_id,
+                start_asset_id=start_asset_id)
+            if not full_inventory:
+                full_inventory['assets'] = inventory['assets']
+                full_inventory['total_inventory_count']\
+                    = inventory['total_inventory_count']
+            else:
+                full_inventory['assets']\
+                    = full_inventory['assets'] | inventory['assets']
+            if inventory['last_asset_id']:
+                start_asset_id = inventory['last_asset_id']
+            else:
+                return full_inventory
+            time.sleep(delay)
+
+    def get_inventory_page(self, partner_steam_id: str, app_id: str,
+                           context_id: str, count: int = 5000,
+                           start_asset_id: str = None) -> dict:
         url = '/'.join([SteamUrl.COMMUNITY, 'inventory', partner_steam_id,
                         app_id, context_id])
         params = {'l': 'english',
@@ -136,21 +156,19 @@ class SteamClient:
         response_dict = self.session.get(url, params=params).json()
         if response_dict['success'] != 1:
             raise ApiException('Success value should be 1.')
-        if merge:
-            assets = merge_items_with_descriptions_from_inventory(
-                response_dict, context_id)
-            more_items = response_dict['more_items']\
-                if 'more_items' in response_dict else None
-            last_asset_id = response_dict['last_assetid']\
-                if 'last_assetid' in response_dict else None
-            inventory = {
-                'assets': assets,
-                'more_items': more_items,
-                'last_asset_id': last_asset_id,
-                'total_inventory_count': response_dict['total_inventory_count']
-            }
-            return inventory
-        return response_dict
+        assets = merge_items_with_descriptions_from_inventory(
+            response_dict, context_id)
+        more_items = response_dict['more_items']\
+            if 'more_items' in response_dict else None
+        last_asset_id = response_dict['last_assetid']\
+            if 'last_assetid' in response_dict else None
+        inventory = {
+            'assets': assets,
+            'more_items': more_items,
+            'last_asset_id': last_asset_id,
+            'total_inventory_count': response_dict['total_inventory_count']
+        }
+        return inventory
 
     @login_required
     def get_wallet_balance(self) -> float:
