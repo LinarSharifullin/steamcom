@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 import urllib.parse
 from decimal import Decimal
 
@@ -56,7 +57,7 @@ class SteamMarket:
         return response.json()
 
     @login_required
-    def get_my_market_listings(self) -> dict:
+    def get_my_market_listings(self, delay: int = 3) -> dict:
         response = self.session.get(SteamUrl.COMMUNITY + '/market')
         if response.status_code != 200:
             text = 'Problem getting the listings. http code: {}'
@@ -76,44 +77,34 @@ class SteamMarket:
             n_total = int(text_between(
                 response.text, listings_total, '</span>').replace(',', ''))
             if n_showing < n_total < 1000:
-                url = '{}/market/mylistings/render/?query=&start={}&count={}'\
-                    .format(SteamUrl.COMMUNITY, n_showing, -1)
-                response = self._session.get(url)
-                if response.status_code != 200:
-                    text = 'Problem getting the listings. http code: {}'
-                    raise ApiException(text.format(response.status_code))
-                jresp = response.json()
-                listing_id_to_assets_address =\
-                    get_listing_id_to_assets_address_from_html(
-                        jresp.get('hovers'))
-                listings_2 = get_market_sell_listings_from_api(
-                    jresp.get('results_html'))
-                listings_2 = merge_items_with_descriptions_from_listing(
-                    listings_2, listing_id_to_assets_address,
-                    jresp.get('assets'))
-                listings['sell_listings'] = {**listings['sell_listings'],
-                                             **listings_2['sell_listings']}
+                listings_2 = self._parse_listings(n_showing, -1)
+                listings['sell_listings']\
+                    = listings['sell_listings'] | listings_2
             else:
                 for i in range(0, n_total, 100):
-                    url = '{}/market/mylistings/?query=&start={}&count={}'\
-                        .format(SteamUrl.COMMUNITY, n_showing + i, 100)
-                    response = self._session.get(url)
-                    if response.status_code != 200:
-                        text = 'Problem getting the listings. http code: {}'
-                        raise ApiException(text.format(response.status_code))
-                    jresp = response.json()
-                    listing_id_to_assets_address =\
-                        get_listing_id_to_assets_address_from_html(
-                            jresp.get('hovers'))
-                    listings_2 = get_market_sell_listings_from_api(
-                        jresp.get('results_html'))
-                    listings_2 = merge_items_with_descriptions_from_listing(
-                        listings_2, listing_id_to_assets_address,
-                        jresp.get('assets'))
-                    listings['sell_listings'] = {
-                        **listings['sell_listings'],
-                        **listings_2['sell_listings']}
+                    time.sleep(delay)
+                    listings_2 = self._parse_listings(n_showing + i, 100)
+                    listings['sell_listings']\
+                        = listings['sell_listings'] | listings_2
         return listings
+
+    def _parse_listings(self, start: int, count: int) -> dict:
+        url = '{}/market/mylistings/render/?query=&start={}&count={}'\
+            .format(SteamUrl.COMMUNITY, start, count)
+        response = self.session.get(url)
+        if response.status_code != 200:
+            text = 'Problem getting the listings. http code: {}'
+            raise ApiException(text.format(response.status_code))
+        jresp = response.json()
+        listing_id_to_assets_address =\
+            get_listing_id_to_assets_address_from_html(
+                jresp.get('hovers'))
+        listings_2 = get_market_sell_listings_from_api(
+            jresp.get('results_html'))
+        listings_2 = merge_items_with_descriptions_from_listing(
+            listings_2, listing_id_to_assets_address,
+            jresp.get('assets'))
+        return listings_2['sell_listings']
 
     @login_required
     def create_buy_order(self, app_id: str, market_hash_name: str,
