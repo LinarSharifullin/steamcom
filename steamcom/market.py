@@ -24,9 +24,18 @@ class SteamMarket:
     @login_required
     def get_price_history(self, app_id: str, market_hash_name: str) -> dict:
         url = SteamUrl.COMMUNITY + '/market/pricehistory/'
-        params = {'country': 'PL',
-                  'appid': app_id,
+        params = {'appid': app_id,
                   'market_hash_name': market_hash_name}
+        response = self.session.get(url, params=params)
+        return response.json()
+
+    def get_orders_histogram(self, item_name_id: str) -> dict:
+        url = SteamUrl.COMMUNITY + '/market/itemordershistogram/'
+        params = {
+            'currency': self.currency_id,
+            'language': 'en',
+            'item_nameid': item_name_id
+        }
         response = self.session.get(url, params=params)
         return response.json()
 
