@@ -26,8 +26,24 @@ class SteamMarket:
         url = SteamUrl.COMMUNITY + '/market/pricehistory/'
         params = {'appid': app_id,
                   'market_hash_name': market_hash_name}
-        response = self.session.get(url, params=params)
-        return response.json()
+        response = self.session.get(url, params=params).json()
+        if not response.get("success"):
+            text = 'Problem getting price history the order. success: '
+            raise ApiException(text + str(response.get("success")))
+        return self._parse_graph(response['prices'])
+
+    def _parse_graph(self, graph):
+        parsed_graph = {}
+        for dot in reversed(graph):
+            date = dot[0][:11]
+            time = dot[0][12:14]
+            price = dot[1]
+            value = int(dot[2])
+            if date not in parsed_graph:
+                parsed_graph[date] = {'dots': {}}
+            parsed_graph[date]['dots'][time] = {'price': price,
+                                                'sales': value}
+        return parsed_graph
 
     def get_orders_histogram(self, item_name_id: str) -> dict:
         url = SteamUrl.COMMUNITY + '/market/itemordershistogram/'
@@ -157,5 +173,5 @@ class SteamMarket:
             data, headers=headers).json()
         if response.get("success") != 1:
             text = 'Problem canceling the order. success: '
-            raise ApiException(text + response.get("success"))
+            raise ApiException(text + str(response.get("success")))
         return response
