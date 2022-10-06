@@ -129,9 +129,24 @@ class SteamMarket:
     @login_required
     def cancel_sell_order(self, sell_listing_id: str) -> None:
         url = f'{SteamUrl.COMMUNITY}/market/removelisting/{sell_listing_id}'
-        data = {"sessionid": self.session.cookies.get_dict()['sessionid']}
-        headers = {'Referer': SteamUrl.COMMUNITY + "/market/"}
+        data = {'sessionid': self.session.cookies.get_dict()['sessionid']}
+        headers = {'Referer': SteamUrl.COMMUNITY + '/market/'}
         response = self.session.post(url, data=data, headers=headers)
         if response.status_code != 200:
             text = 'Problem removing the listing. http code: '
             raise ApiException(text + response.status_code)
+
+    @login_required
+    def cancel_buy_order(self, buy_order_id) -> dict:
+        data = {
+            'sessionid': self.session.cookies.get_dict()['sessionid'],
+            'buy_orderid': buy_order_id
+        }
+        headers = {'Referer': SteamUrl.COMMUNITY + '/market'}
+        response = self.session.post(
+            SteamUrl.COMMUNITY + '/market/cancelbuyorder/',
+            data, headers=headers).json()
+        if response.get("success") != 1:
+            text = 'Problem canceling the order. success: '
+            raise ApiException(text + response.get("success"))
+        return response
