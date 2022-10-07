@@ -128,6 +128,7 @@ print(secret_code) # KPI21
 
 ## generate_device_id(steam_id: str) -> str
 
+
 # market module functions
 ## get_price_history(app_id: str, market_hash_name: str) -> dict
 Return parsed graph dots:
@@ -166,4 +167,44 @@ Return parsed graph dots:
                           '04': {'price': 47.308, 'sales': 2573},
                           '05': {'price': 30.305, 'sales': 3619},
                           '06': {'price': 18.789, 'sales': 5698}}}}
+```
+
+## get_orders_histogram(item_name_id: str) -> dict
+Return parsed histogram dots:
+```python
+{'buy_order_graph': [{'price': 2.67, 'value': 1},
+                     {'price': 2.66, 'value': 1},
+                     {'price': 2.6, 'value': 4},
+                     {'price': 2.57, 'value': 23},
+                     {'price': 2.54, 'value': 20},
+                     {'price': 2.5, 'value': 1},
+                     {'price': 2.49, 'value': 1},
+                     {'price': 2.02, 'value': 3},
+                     {'price': 1.92, 'value': 9},
+                     {'price': 1.74, 'value': 15},
+                     {'price': 1.65, 'value': 1},
+                     {'price': 1.53, 'value': 2},
+                     {'price': 1.4, 'value': 1},
+                     {'price': 1.3, 'value': 9},
+                     {'price': 1.24, 'value': 1},
+                     {'price': 1, 'value': 15},
+                     {'price': 0.87, 'value': 97}],
+ 'sell_order_graph': [{'price': 3.24, 'value': 1},
+                      {'price': 3.25, 'value': 1},
+                      {'price': 3.27, 'value': 1},
+                      {'price': 3.28, 'value': 4},
+                      {'price': 3.29, 'value': 2},
+                      {'price': 3.3, 'value': 15},
+                      {'price': 3.33, 'value': 1},
+                      {'price': 3.34, 'value': 3},
+                      {'price': 3.35, 'value': 1},
+                      {'price': 3.36, 'value': 2},
+                      {'price': 3.38, 'value': 1},
+                      {'price': 3.41, 'value': 4},
+                      {'price': 3.42, 'value': 1},
+                      {'price': 3.45, 'value': 36},
+                      {'price': 3.49, 'value': 2},
+                      {'price': 3.5, 'value': 1},
+                      {'price': 3.52, 'value': 1},
+                      {'price': 3.56, 'value': 2}]}
 ```

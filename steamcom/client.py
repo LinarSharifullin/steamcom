@@ -117,12 +117,13 @@ class SteamClient:
         return int(re.search(r'\d+', part_with_currency[0])[0])
 
     @login_required
-    def get_my_inventory(self, app_id: str, context_id: str, delay=3) -> dict:
+    def get_my_inventory(self, app_id: str, context_id: str,
+                         delay: int = 3) -> dict:
         steam_id = self.steam_id
         return self.get_partner_inventory(steam_id, app_id, context_id, delay)
 
     def get_partner_inventory(self, partner_steam_id: str, app_id: str,
-                              context_id: str, delay=3) -> dict:
+                              context_id: str, delay: int = 3) -> dict:
         start_asset_id = None
         full_inventory = {}
         while True:
