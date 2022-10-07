@@ -270,3 +270,6 @@ Response
 ```python
 {'success': 1}
 ```
+
+# fee_counter module functions
+## count(price: float) -> int
