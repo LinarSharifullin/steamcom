@@ -246,3 +246,27 @@ Return listings
                          'need_confirmation': False,
                          'you_receive': '2,36 pуб.'}}
 ```
+
+## create_buy_order(app_id: str, market_hash_name: str, price_single_item: str, quantity: int) -> dict:
+Reponse
+```python
+{'success': 1, 'buy_orderid': '5465633972'}
+```
+
+## create_sell_order(asset_id: str, app_id: str, context_id: str, money_to_receive: str) -> dict:
+Response
+```python
+{'email_domain': 'gmail.com',
+ 'needs_email_confirmation': False,
+ 'needs_mobile_confirmation': True,
+ 'requires_confirmation': 1,
+ 'success': True}
+```
+
+## cancel_sell_order(sell_listing_id: str) -> None:
+
+## cancel_buy_order(buy_order_id) -> dict:
+Response
+```python
+{'success': 1}
+```
