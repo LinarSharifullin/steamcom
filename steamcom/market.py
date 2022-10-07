@@ -54,7 +54,28 @@ class SteamMarket:
             'item_nameid': item_name_id
         }
         response = self.session.get(url, params=params)
-        return response.json()
+        return self._parse_orders_histogram(response.json())
+
+    def _parse_orders_histogram(self, histogram: dict) -> dict:
+        orders = []
+        listings = []
+        previous_value = 0
+        for order in histogram['buy_order_graph']:
+            price = order[0]
+            value = order[1] - previous_value
+            previous_value = order[1]
+            orders.append({'price': price, 'value': value})
+        previous_value = 0
+        for listing in histogram['sell_order_graph']:
+            price = listing[0]
+            value = listing[1] - previous_value
+            previous_value = listing[1]
+            listings.append({'price': price, 'value': value})
+        parsed_histogram = {
+            'buy_order_graph': orders,
+            'sell_order_graph': listings
+        }
+        return parsed_histogram
 
     @login_required
     def get_my_market_listings(self, delay: int = 3) -> dict:
