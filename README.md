@@ -208,3 +208,41 @@ Return parsed histogram dots:
                       {'price': 3.52, 'value': 1},
                       {'price': 3.56, 'value': 2}]}
 ```
+
+## get_my_market_listings(self, delay: int = 3) -> dict
+Return listings
+```python
+{'3868053667603823025': {'buyer_pay': '2,70 pуб.',
+                         'created_on': '3 Oct',
+                         'description': {'amount': '1',
+                                         'app_icon': ...,
+                                         'appid': 570,
+                                         'background_color': '',
+                                         'classid': '521521104',
+                                         'commodity': 0,
+                                         'contextid': '2',
+                                         'currency': 0,
+                                         'descriptions': ...
+                                         'icon_url': ...
+                                         'id': '24699743025',
+                                         'instanceid': '5017446107',
+                                         'market_hash_name': 'Lesser Twin '
+                                                             'Blade',
+                                         'market_marketable_restriction': 0,
+                                         'market_name': 'Lesser Twin Blade',
+                                         'market_tradable_restriction': 7,
+                                         'marketable': 1,
+                                         'name': 'Lesser Twin Blade',
+                                         'name_color': 'D2D2D2',
+                                         'original_amount': '1',
+                                         'owner': 0,
+                                         'owner_descriptions': ...,
+                                         'status': 2,
+                                         'tradable': 0,
+                                         'type': 'Rare Offhand',
+                                         'unowned_contextid': '2',
+                                         'unowned_id': ...},
+                         'listing_id': '3868053667603823025',
+                         'need_confirmation': False,
+                         'you_receive': '2,36 pуб.'}}
+```
