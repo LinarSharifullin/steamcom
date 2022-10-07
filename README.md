@@ -127,3 +127,43 @@ print(secret_code) # KPI21
 ## generate_confirmation_key(identity_secret: str, tag: str) -> bytes
 
 ## generate_device_id(steam_id: str) -> str
+
+# market module functions
+## get_price_history(app_id: str, market_hash_name: str) -> dict
+Return parsed graph dots:
+```python
+{'Oct 05 2022': {'dots': {'21': {'price': 99.435, 'sales': 43},
+                          '22': {'price': 139.317, 'sales': 270},
+                          '23': {'price': 162.369, 'sales': 480}}},
+ 'Oct 06 2022': {'dots': {'00': {'price': 136.98, 'sales': 1591},
+                          '01': {'price': 95.765, 'sales': 2486},
+                          '02': {'price': 128.912, 'sales': 1166},
+                          '03': {'price': 79.4, 'sales': 3488},
+                          '04': {'price': 64.853, 'sales': 3509},
+                          '05': {'price': 48.488, 'sales': 3615},
+                          '06': {'price': 38.628, 'sales': 4189},
+                          '07': {'price': 19.867, 'sales': 5858},
+                          '08': {'price': 14.915, 'sales': 4695},
+                          '09': {'price': 17.805, 'sales': 3632},
+                          '10': {'price': 36.602, 'sales': 2347},
+                          '11': {'price': 39.764, 'sales': 2222},
+                          '12': {'price': 38.924, 'sales': 2625},
+                          '13': {'price': 29.821, 'sales': 2613},
+                          '14': {'price': 29.942, 'sales': 1829},
+                          '15': {'price': 41.774, 'sales': 1553},
+                          '16': {'price': 54.72, 'sales': 1312},
+                          '17': {'price': 77.849, 'sales': 725},
+                          '18': {'price': 93.34, 'sales': 584},
+                          '19': {'price': 85.461, 'sales': 668},
+                          '20': {'price': 87.43, 'sales': 747},
+                          '21': {'price': 89.098, 'sales': 744},
+                          '22': {'price': 98.189, 'sales': 1210},
+                          '23': {'price': 58.792, 'sales': 2255}}},
+ 'Oct 07 2022': {'dots': {'00': {'price': 53.943, 'sales': 3456},
+                          '01': {'price': 48.988, 'sales': 3294},
+                          '02': {'price': 44.246, 'sales': 3292},
+                          '03': {'price': 44.246, 'sales': 3058},
+                          '04': {'price': 47.308, 'sales': 2573},
+                          '05': {'price': 30.305, 'sales': 3619},
+                          '06': {'price': 18.789, 'sales': 5698}}}}
+```
