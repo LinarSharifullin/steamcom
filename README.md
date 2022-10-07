@@ -114,6 +114,8 @@ status = steam_client.confirmations.respond_to_confirmation(first_confirmation)
 print(status) # True
 ```
 
+## allow_all_confirmations(types: Iterable[ConfirmationType], delay: int = 3) -> None
+
 # guard module functions
 ## generate_one_time_code(shared_secret: str) -> str
 ```python
