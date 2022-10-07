@@ -78,6 +78,8 @@ Return parsed inventory:
 ## get_my_inventory(app_id: str, context_id: str, delay: int = 3) -> dict:
 The response is the same as get_partner_inventory
 
+## get_wallet_balance() -> float
+
 # ConfirmationExecutor Methods
 ## get_confirmations() -> list[Confirmation]
 ```python
