@@ -43,6 +43,38 @@ steam_client.load_session(extracted_session)
 
 ## is_session_alive() -> bool
 
+## get_partner_inventory(partner_steam_id: str, app_id: str, context_id: str, delay: int = 3) -> dict:
+Return parsed inventory:
+```python
+{'assets': {'12176056772': {'actions': ...,
+                            'amount': '1',
+                            'appid': 440,
+                            'background_color': '3C352E',
+                            'classid': '2569645959',
+                            'commodity': 0,
+                            'contextid': '2',
+                            'currency': 0,
+                            'descriptions': ...,
+                            'icon_url': ...,
+                            'icon_url_large': ...,
+                            'id': '12176056772',
+                            'instanceid': '5020381097',
+                            'market_actions': ...,
+                            'market_hash_name': 'Civic Duty Mk.II War Paint '
+                                                '(Field-Tested)',
+                            'market_marketable_restriction': 0,
+                            'market_name': 'Civic Duty Mk.II War Paint '
+                                           '(Field-Tested)',
+                            'market_tradable_restriction': 7,
+                            'marketable': 1,
+                            'name': 'Civic Duty Mk.II War Paint',
+                            'name_color': 'FAFAFA',
+                            'tags': ...
+                            'tradable': 0,
+                            'type': ''}},
+ 'total_inventory_count': 1}
+```
+
 # ConfirmationExecutor Methods
 ## get_confirmations() -> list[Confirmation]
 ```python
