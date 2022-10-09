@@ -144,6 +144,9 @@ class SteamMarket:
         response = self.session.post(
             SteamUrl.COMMUNITY + "/market/createbuyorder/", data,
             headers=headers).json()
+        if response.get("success") != 1:
+            text = 'Problem set the buy order. success: '
+            raise ApiException(text + str(response.get("success")))
         return response
 
     @login_required
