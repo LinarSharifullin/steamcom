@@ -113,8 +113,8 @@ class SteamClient:
 
     def get_my_currency_id(self) -> int:
         response = self.session.get(SteamUrl.COMMUNITY + '/market/')
-        part_with_currency = re.search(r'wallet_currency":\d+', response.text)
-        return int(re.search(r'\d+', part_with_currency[0])[0])
+        part_with_currency = re.search('wallet_currency":\d+', response.text)
+        return int(re.search('\d+', part_with_currency[0])[0])
 
     @login_required
     def get_my_inventory(self, app_id: str, context_id: str,
