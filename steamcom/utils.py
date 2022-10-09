@@ -113,8 +113,8 @@ def get_sell_listings_from_node(node: Tag) -> dict:
                 'div', {'class': 'market_listing_listed_date'})[0]
         listing = {
             'listing_id': listing_raw.attrs['id'].replace('mylisting_', ''),
-            'buyer_pay': spans[0].text.strip(),
-            'you_receive': spans[1].text.strip()[1:-1],
+            'buyer_pay': parse_price(spans[0].text.strip()),
+            'you_receive': parse_price(spans[1].text.strip()[1:-1]),
             'created_on': created_date.text.strip(),
             'need_confirmation': False
         }
@@ -131,7 +131,7 @@ def get_buy_orders_from_node(node: Tag) -> dict:
         order = {
             'order_id': order.attrs['id'].replace('mybuyorder_', ''),
             'quantity': int(qnt_price_raw[0].strip()),
-            'price': qnt_price_raw[1].strip(),
+            'price': parse_price(qnt_price_raw[1].strip()),
             'item_name': order.a.text
         }
         buy_orders_dict[order['order_id']] = order

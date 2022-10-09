@@ -230,7 +230,7 @@ Return parsed histogram dots:
 ## get_my_market_listings(self, delay: int = 3) -> dict
 Return listings
 ```python
-{'3868053667603823025': {'buyer_pay': '2,70 pуб.',
+{'3868053667603823025': {'buyer_pay': '2.70',
                          'created_on': '3 Oct',
                          'description': {'amount': '1',
                                          'app_icon': ...,
@@ -262,7 +262,7 @@ Return listings
                                          'unowned_id': ...},
                          'listing_id': '3868053667603823025',
                          'need_confirmation': False,
-                         'you_receive': '2,36 pуб.'}}
+                         'you_receive': '2.36'}}
 ```
 
 ## create_buy_order(app_id: str, market_hash_name: str, price_single_item: str, quantity: int) -> dict:
@@ -287,6 +287,12 @@ Response
 Response
 ```python
 {'success': 1}
+```
+
+## check_placed_buy_order(app_id: str, market_hash_name: str) -> None | dict:
+Response
+```python
+{'order_id': '5470863090', 'quantity': 10, 'price': 0.49, 'item_name': 'Dragonterror Cape'}
 ```
 
 # fee_counter module functions

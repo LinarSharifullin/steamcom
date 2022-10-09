@@ -174,7 +174,7 @@ class SteamMarket:
             raise ApiException(text + response.status_code)
 
     @login_required
-    def cancel_buy_order(self, buy_order_id) -> dict:
+    def cancel_buy_order(self, buy_order_id: str) -> dict:
         data = {
             'sessionid': self.session.cookies.get_dict()['sessionid'],
             'buy_orderid': buy_order_id
@@ -187,3 +187,15 @@ class SteamMarket:
             text = 'Problem canceling the order. success: '
             raise ApiException(text + str(response.get("success")))
         return response
+
+    @login_required
+    def check_placed_buy_order(self, app_id: str,
+                               market_hash_name: str) -> None | dict:
+        url = SteamUrl.COMMUNITY + '/market/listings/{}/{}'
+        response = self.session.get(url.format(app_id, market_hash_name)).text
+        if 'mbuyorder' in response:
+            buy_orders = get_market_listings_from_html(response)['buy_orders']
+            first_buy_order = list(buy_orders.keys())[0]
+            return buy_orders[first_buy_order]
+        else:
+            return None
