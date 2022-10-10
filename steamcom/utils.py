@@ -1,6 +1,7 @@
 import copy
 import re
 from typing import List
+from datetime import datetime
 from urllib.parse import unquote
 
 from bs4 import BeautifulSoup, Tag
@@ -112,11 +113,17 @@ def get_sell_listings_from_node(node: Tag) -> dict:
         spans = listing_raw.select('span[title]')
         created_date = listing_raw.findAll(
                 'div', {'class': 'market_listing_listed_date'})[0]
+        year = ' ' + str(datetime.now().year)
+        created_date = created_date.text.strip()
+        created_on = created_date + year if len(created_date) < 8\
+            else created_date
+        timestamp = datetime.strptime(created_on, '%d %b %Y').timestamp()
         listing = {
             'listing_id': listing_raw.attrs['id'].replace('mylisting_', ''),
             'buyer_pay': parse_price(spans[0].text.strip()),
             'you_receive': parse_price(spans[1].text.strip()[1:-1]),
-            'created_on': created_date.text.strip(),
+            'created_on': created_date,
+            'created_timestamp': int(timestamp),
             'need_confirmation': False
         }
         sell_listings_dict[listing['listing_id']] = listing
