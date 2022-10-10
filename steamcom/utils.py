@@ -56,7 +56,7 @@ def get_description_key(item: dict) -> str:
 
 
 def parse_price(price: str) -> float:
-    pattern = '\D?(\\d*)(\\.|,)?(\\d*)'
+    pattern = '\\D?(\\d*)(\\.|,)?(\\d*)'
     tokens = re.search(pattern, price, re.UNICODE)
     decimal_str = tokens.group(1) + '.' + tokens.group(3)
     return float(decimal_str)
