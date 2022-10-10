@@ -1,6 +1,7 @@
 import copy
 import re
 from typing import List
+from urllib.parse import unquote
 
 from bs4 import BeautifulSoup, Tag
 
@@ -136,7 +137,8 @@ def get_buy_orders_from_node(node: Tag) -> dict:
             'price': parse_price(qnt_price_raw[1].strip()),
             'item_name': order.a.text,
             'item_link': item_link,
-            'market_hash_name': item_link.split('/')[-1]
+            'market_hash_name': unquote(item_link.split('/')[-1],
+                                        encoding='utf-8', errors='replace')
         }
         buy_orders_dict[order['order_id']] = order
     return buy_orders_dict

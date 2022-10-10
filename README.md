@@ -244,7 +244,7 @@ Return listings
     '5470862660': {
         'item_link': 'https://steamcommunity.com/market/listings/570/Seething%20Orbit',
         'item_name': 'Seething Orbit',
-        'market_hash_name': 'Seething%20Orbit',
+        'market_hash_name': 'Seething Orbit',
         'order_id': '5470862660',
         'price': 6.65,
         'quantity': 5}
