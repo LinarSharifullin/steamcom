@@ -62,32 +62,34 @@ steam_client.load_session(extracted_session)
 ## get_partner_inventory(partner_steam_id: str, app_id: str, context_id: str, delay: int = 3) -> dict:
 Return parsed inventory:
 ```python
-{'assets': {'12176056772': {'actions': ...,
-                            'amount': '1',
-                            'appid': 440,
-                            'background_color': '3C352E',
-                            'classid': '2569645959',
-                            'commodity': 0,
-                            'contextid': '2',
-                            'currency': 0,
-                            'descriptions': ...,
-                            'icon_url': ...,
-                            'icon_url_large': ...,
-                            'id': '12176056772',
-                            'instanceid': '5020381097',
-                            'market_actions': ...,
-                            'market_hash_name': 'Civic Duty Mk.II War Paint '
-                                                '(Field-Tested)',
-                            'market_marketable_restriction': 0,
-                            'market_name': 'Civic Duty Mk.II War Paint '
-                                           '(Field-Tested)',
-                            'market_tradable_restriction': 7,
-                            'marketable': 1,
-                            'name': 'Civic Duty Mk.II War Paint',
-                            'name_color': 'FAFAFA',
-                            'tags': ...
-                            'tradable': 0,
-                            'type': ''}},
+{'assets': {
+    '12176056772': {
+        'actions': ...,
+        'amount': '1',
+        'appid': 440,
+        'background_color': '3C352E',
+        'classid': '2569645959',
+        'commodity': 0,
+        'contextid': '2',
+        'currency': 0,
+        'descriptions': ...,
+        'icon_url': ...,
+        'icon_url_large': ...,
+        'id': '12176056772',
+        'instanceid': '5020381097',
+        'market_actions': ...,
+        'market_hash_name': 'Civic Duty Mk.II War Paint '
+                            '(Field-Tested)',
+        'market_marketable_restriction': 0,
+        'market_name': 'Civic Duty Mk.II War Paint '
+                       '(Field-Tested)',
+        'market_tradable_restriction': 7,
+        'marketable': 1,
+        'name': 'Civic Duty Mk.II War Paint',
+        'name_color': 'FAFAFA',
+        'tags': ...
+        'tradable': 0,
+        'type': ''}},
  'total_inventory_count': 1}
 ```
 
@@ -151,118 +153,139 @@ print(secret_code) # KPI21
 ## get_price_history(app_id: str, market_hash_name: str) -> dict
 Return parsed graph dots:
 ```python
-{'Oct 05 2022': {'dots': {'21': {'price': 99.435, 'sales': 43},
-                          '22': {'price': 139.317, 'sales': 270},
-                          '23': {'price': 162.369, 'sales': 480}}},
- 'Oct 06 2022': {'dots': {'00': {'price': 136.98, 'sales': 1591},
-                          '01': {'price': 95.765, 'sales': 2486},
-                          '02': {'price': 128.912, 'sales': 1166},
-                          '03': {'price': 79.4, 'sales': 3488},
-                          '04': {'price': 64.853, 'sales': 3509},
-                          '05': {'price': 48.488, 'sales': 3615},
-                          '06': {'price': 38.628, 'sales': 4189},
-                          '07': {'price': 19.867, 'sales': 5858},
-                          '08': {'price': 14.915, 'sales': 4695},
-                          '09': {'price': 17.805, 'sales': 3632},
-                          '10': {'price': 36.602, 'sales': 2347},
-                          '11': {'price': 39.764, 'sales': 2222},
-                          '12': {'price': 38.924, 'sales': 2625},
-                          '13': {'price': 29.821, 'sales': 2613},
-                          '14': {'price': 29.942, 'sales': 1829},
-                          '15': {'price': 41.774, 'sales': 1553},
-                          '16': {'price': 54.72, 'sales': 1312},
-                          '17': {'price': 77.849, 'sales': 725},
-                          '18': {'price': 93.34, 'sales': 584},
-                          '19': {'price': 85.461, 'sales': 668},
-                          '20': {'price': 87.43, 'sales': 747},
-                          '21': {'price': 89.098, 'sales': 744},
-                          '22': {'price': 98.189, 'sales': 1210},
-                          '23': {'price': 58.792, 'sales': 2255}}},
- 'Oct 07 2022': {'dots': {'00': {'price': 53.943, 'sales': 3456},
-                          '01': {'price': 48.988, 'sales': 3294},
-                          '02': {'price': 44.246, 'sales': 3292},
-                          '03': {'price': 44.246, 'sales': 3058},
-                          '04': {'price': 47.308, 'sales': 2573},
-                          '05': {'price': 30.305, 'sales': 3619},
-                          '06': {'price': 18.789, 'sales': 5698}}}}
+{'Oct 05 2022': {
+    'dots': {
+        '21': {'price': 99.435, 'sales': 43},
+        '22': {'price': 139.317, 'sales': 270},
+        '23': {'price': 162.369, 'sales': 480}}},
+ 'Oct 06 2022': {
+    'dots': {
+        '00': {'price': 136.98, 'sales': 1591},
+        '01': {'price': 95.765, 'sales': 2486},
+        '02': {'price': 128.912, 'sales': 1166},
+        '03': {'price': 79.4, 'sales': 3488},
+        '04': {'price': 64.853, 'sales': 3509},
+        '05': {'price': 48.488, 'sales': 3615},
+        '06': {'price': 38.628, 'sales': 4189},
+        '07': {'price': 19.867, 'sales': 5858},
+        '08': {'price': 14.915, 'sales': 4695},
+        '09': {'price': 17.805, 'sales': 3632},
+        '10': {'price': 36.602, 'sales': 2347},
+        '11': {'price': 39.764, 'sales': 2222},
+        '12': {'price': 38.924, 'sales': 2625},
+        '13': {'price': 29.821, 'sales': 2613},
+        '14': {'price': 29.942, 'sales': 1829},
+        '15': {'price': 41.774, 'sales': 1553},
+        '16': {'price': 54.72, 'sales': 1312},
+        '17': {'price': 77.849, 'sales': 725},
+        '18': {'price': 93.34, 'sales': 584},
+        '19': {'price': 85.461, 'sales': 668},
+        '20': {'price': 87.43, 'sales': 747},
+        '21': {'price': 89.098, 'sales': 744},
+        '22': {'price': 98.189, 'sales': 1210},
+        '23': {'price': 58.792, 'sales': 2255}}},
+ 'Oct 07 2022': {
+    'dots': {
+        '00': {'price': 53.943, 'sales': 3456},
+        '01': {'price': 48.988, 'sales': 3294},
+        '02': {'price': 44.246, 'sales': 3292},
+        '03': {'price': 44.246, 'sales': 3058},
+        '04': {'price': 47.308, 'sales': 2573},
+        '05': {'price': 30.305, 'sales': 3619},
+        '06': {'price': 18.789, 'sales': 5698}}}}
 ```
 
 ## get_orders_histogram(item_name_id: str) -> dict
 Return parsed histogram dots:
 ```python
-{'buy_order_graph': [{'price': 2.67, 'value': 1},
-                     {'price': 2.66, 'value': 1},
-                     {'price': 2.6, 'value': 4},
-                     {'price': 2.57, 'value': 23},
-                     {'price': 2.54, 'value': 20},
-                     {'price': 2.5, 'value': 1},
-                     {'price': 2.49, 'value': 1},
-                     {'price': 2.02, 'value': 3},
-                     {'price': 1.92, 'value': 9},
-                     {'price': 1.74, 'value': 15},
-                     {'price': 1.65, 'value': 1},
-                     {'price': 1.53, 'value': 2},
-                     {'price': 1.4, 'value': 1},
-                     {'price': 1.3, 'value': 9},
-                     {'price': 1.24, 'value': 1},
-                     {'price': 1, 'value': 15},
-                     {'price': 0.87, 'value': 97}],
- 'sell_order_graph': [{'price': 3.24, 'value': 1},
-                      {'price': 3.25, 'value': 1},
-                      {'price': 3.27, 'value': 1},
-                      {'price': 3.28, 'value': 4},
-                      {'price': 3.29, 'value': 2},
-                      {'price': 3.3, 'value': 15},
-                      {'price': 3.33, 'value': 1},
-                      {'price': 3.34, 'value': 3},
-                      {'price': 3.35, 'value': 1},
-                      {'price': 3.36, 'value': 2},
-                      {'price': 3.38, 'value': 1},
-                      {'price': 3.41, 'value': 4},
-                      {'price': 3.42, 'value': 1},
-                      {'price': 3.45, 'value': 36},
-                      {'price': 3.49, 'value': 2},
-                      {'price': 3.5, 'value': 1},
-                      {'price': 3.52, 'value': 1},
-                      {'price': 3.56, 'value': 2}]}
+{'buy_order_graph': [
+    {'price': 2.67, 'value': 1},
+    {'price': 2.66, 'value': 1},
+    {'price': 2.6, 'value': 4},
+    {'price': 2.57, 'value': 23},
+    {'price': 2.54, 'value': 20},
+    {'price': 2.5, 'value': 1},
+    {'price': 2.49, 'value': 1},
+    {'price': 2.02, 'value': 3},
+    {'price': 1.92, 'value': 9},
+    {'price': 1.74, 'value': 15},
+    {'price': 1.65, 'value': 1},
+    {'price': 1.53, 'value': 2},
+    {'price': 1.4, 'value': 1},
+    {'price': 1.3, 'value': 9},
+    {'price': 1.24, 'value': 1},
+    {'price': 1, 'value': 15},
+    {'price': 0.87, 'value': 97}],
+ 'sell_order_graph': [
+    {'price': 3.24, 'value': 1},
+    {'price': 3.25, 'value': 1},
+    {'price': 3.27, 'value': 1},
+    {'price': 3.28, 'value': 4},
+    {'price': 3.29, 'value': 2},
+    {'price': 3.3, 'value': 15},
+    {'price': 3.33, 'value': 1},
+    {'price': 3.34, 'value': 3},
+    {'price': 3.35, 'value': 1},
+    {'price': 3.36, 'value': 2},
+    {'price': 3.38, 'value': 1},
+    {'price': 3.41, 'value': 4},
+    {'price': 3.42, 'value': 1},
+    {'price': 3.45, 'value': 36},
+    {'price': 3.49, 'value': 2},
+    {'price': 3.5, 'value': 1},
+    {'price': 3.52, 'value': 1},
+    {'price': 3.56, 'value': 2}]}
 ```
 
 ## get_my_market_listings(self, delay: int = 3) -> dict
 Return listings
 ```python
-{'3868053667603823025': {'buyer_pay': '2.70',
-                         'created_on': '3 Oct',
-                         'description': {'amount': '1',
-                                         'app_icon': ...,
-                                         'appid': 570,
-                                         'background_color': '',
-                                         'classid': '521521104',
-                                         'commodity': 0,
-                                         'contextid': '2',
-                                         'currency': 0,
-                                         'descriptions': ...
-                                         'icon_url': ...
-                                         'id': '24699743025',
-                                         'instanceid': '5017446107',
-                                         'market_hash_name': 'Lesser Twin '
-                                                             'Blade',
-                                         'market_marketable_restriction': 0,
-                                         'market_name': 'Lesser Twin Blade',
-                                         'market_tradable_restriction': 7,
-                                         'marketable': 1,
-                                         'name': 'Lesser Twin Blade',
-                                         'name_color': 'D2D2D2',
-                                         'original_amount': '1',
-                                         'owner': 0,
-                                         'owner_descriptions': ...,
-                                         'status': 2,
-                                         'tradable': 0,
-                                         'type': 'Rare Offhand',
-                                         'unowned_contextid': '2',
-                                         'unowned_id': ...},
-                         'listing_id': '3868053667603823025',
-                         'need_confirmation': False,
-                         'you_receive': '2.36'}}
+{'buy_orders': {
+    '5470862660': {
+        'item_link': 'https://steamcommunity.com/market/listings/570/Seething%20Orbit',
+        'item_name': 'Seething Orbit',
+        'market_hash_name': 'Seething%20Orbit',
+        'order_id': '5470862660',
+        'price': 6.65,
+        'quantity': 5}
+    },
+ 'sell_listings': {
+    '3868053667603823025': {
+        'buyer_pay': 2.70,
+        'created_on': '3 Oct',
+        'description': {
+            'amount': '1',
+            'app_icon': ...,
+            'appid': 570,
+            'background_color': '',
+            'classid': '521521104',
+            'commodity': 0,
+            'contextid': '2',
+            'currency': 0,
+            'descriptions': ...
+            'icon_url': ...
+            'id': '24699743025',
+            'instanceid': '5017446107',
+            'market_hash_name': 'Lesser Twin',
+            'market_marketable_restriction': 0,
+            'market_name': 'Lesser Twin Blade',
+            'market_tradable_restriction': 7,
+            'marketable': 1,
+            'name': 'Lesser Twin Blade',
+            'name_color': 'D2D2D2',
+            'original_amount': '1',
+            'owner': 0,
+            'owner_descriptions': ...,
+            'status': 2,
+            'tradable': 0,
+            'type': 'Rare Offhand',
+            'unowned_contextid': '2',
+            'unowned_id': ...},
+        'listing_id': '3868053667603823025',
+        'need_confirmation': False,
+        'you_receive': '2.36'
+    }
+}
 ```
 
 ## create_buy_order(app_id: str, market_hash_name: str, price_single_item: str, quantity: int) -> dict:
@@ -274,11 +297,13 @@ Reponse
 ## create_sell_order(asset_id: str, app_id: str, context_id: str, money_to_receive: str) -> dict:
 Response
 ```python
-{'email_domain': 'gmail.com',
- 'needs_email_confirmation': False,
- 'needs_mobile_confirmation': True,
- 'requires_confirmation': 1,
- 'success': True}
+{
+    'email_domain': 'gmail.com',
+    'needs_email_confirmation': False,
+    'needs_mobile_confirmation': True,
+    'requires_confirmation': 1,
+    'success': True
+}
 ```
 
 ## cancel_sell_order(sell_listing_id: str) -> None:
@@ -292,7 +317,14 @@ Response
 ## check_placed_buy_order(app_id: str, market_hash_name: str) -> None | dict:
 Response
 ```python
-{'order_id': '5470863090', 'quantity': 10, 'price': 0.49, 'item_name': 'Dragonterror Cape'}
+{
+    'item_link': 'https://steamcommunity.com/market/listings/570/Seething%20Orbit',
+    'item_name': 'Seething Orbit',
+    'market_hash_name': 'Seething%20Orbit',
+    'order_id': '5470862660',
+    'price': 6.65,
+    'quantity': 5
+}
 ```
 
 # fee_counter module functions
