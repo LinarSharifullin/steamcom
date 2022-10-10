@@ -9,7 +9,7 @@ from steamcom.utils import (login_required, text_between,
                             get_market_listings_from_html,
                             merge_items_with_descriptions_from_listing,
                             get_market_sell_listings_from_api)
-from steamcom.models import SteamUrl
+from steamcom.models import SteamUrl, Result
 from steamcom.exceptions import ApiException
 
 
@@ -169,7 +169,7 @@ class SteamMarket:
         data = {'sessionid': self.session.cookies.get_dict()['sessionid']}
         headers = {'Referer': SteamUrl.COMMUNITY + '/market/'}
         response = self.session.post(url, data=data, headers=headers)
-        if response.status_code != 200:
+        if not response.ok:
             text = 'Problem removing the listing. http code: '
             raise ApiException(text + response.status_code)
 
@@ -183,7 +183,7 @@ class SteamMarket:
         response = self.session.post(
             SteamUrl.COMMUNITY + '/market/cancelbuyorder/',
             data, headers=headers).json()
-        if response.get("success") != 1:
+        if response.get("success") != Result.OK.value:
             text = 'Problem canceling the order. success: '
             raise ApiException(text + str(response.get("success")))
         return response
