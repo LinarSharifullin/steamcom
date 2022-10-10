@@ -136,7 +136,7 @@ def get_buy_orders_from_node(node: Tag) -> dict:
             'price': parse_price(qnt_price_raw[1].strip()),
             'item_name': order.a.text,
             'item_link': item_link,
-            'market_hash_name': item_link[-1]
+            'market_hash_name': item_link.split('/')[-1]
         }
         buy_orders_dict[order['order_id']] = order
     return buy_orders_dict
