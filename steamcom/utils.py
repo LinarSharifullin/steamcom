@@ -128,11 +128,15 @@ def get_buy_orders_from_node(node: Tag) -> dict:
     for order in buy_orders_raw:
         qnt_price_raw = order.select('span[class=market_listing_price]')[0]\
             .text.split("@")
+        regex = 'a[class=market_listing_item_name_link]'
+        item_link = order.select(regex)[0]['href']
         order = {
             'order_id': order.attrs['id'].replace('mybuyorder_', ''),
             'quantity': int(qnt_price_raw[0].strip()),
             'price': parse_price(qnt_price_raw[1].strip()),
-            'item_name': order.a.text
+            'item_name': order.a.text,
+            'item_link': item_link,
+            'market_hash_name': item_link[-1]
         }
         buy_orders_dict[order['order_id']] = order
     return buy_orders_dict
