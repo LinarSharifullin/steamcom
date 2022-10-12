@@ -44,6 +44,13 @@ class Confirmation(NamedTuple):
         return f'Confirmation: {self.title}'
 
 
+class HistoryStatus(enum.IntEnum):
+    LISTED = 1
+    SOLD = 2
+    CANCELED = 3
+    PURCHASED = 4
+
+
 class Result(enum.IntEnum):
     INVALID = 0
     OK = 1
