@@ -201,3 +201,13 @@ class SteamMarket:
             return buy_orders[first_buy_order]
         else:
             return None
+
+    def get_market_history_page(self, start: int = 0, count: int = 0) -> dict:
+        url = SteamUrl.COMMUNITY + '/market/myhistory/render/'
+        params = {
+            'start': start,
+            'count': count,
+            'norender': 1
+        }
+        response = self.session.get(url, params=params).json()
+        return response
