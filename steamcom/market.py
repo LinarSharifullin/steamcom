@@ -8,7 +8,7 @@ from steamcom.utils import (login_required, text_between,
                             get_listing_id_to_assets_address_from_html,
                             get_market_listings_from_html,
                             merge_items_with_descriptions_from_listing,
-                            get_market_sell_listings_from_api)
+                            get_market_sell_listings_from_api, parse_history)
 from steamcom.models import SteamUrl, Result
 from steamcom.exceptions import ApiException
 
@@ -202,7 +202,8 @@ class SteamMarket:
         else:
             return None
 
-    def get_market_history_page(self, start: int = 0, count: int = 0) -> dict:
+    def get_market_history_page(self, start: int = 0,
+                                count: int = 500) -> dict:
         url = SteamUrl.COMMUNITY + '/market/myhistory/render/'
         params = {
             'start': start,
@@ -210,4 +211,4 @@ class SteamMarket:
             'norender': 1
         }
         response = self.session.get(url, params=params).json()
-        return response
+        return parse_history(response)

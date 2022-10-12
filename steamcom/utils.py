@@ -6,6 +6,7 @@ from urllib.parse import unquote
 
 from bs4 import BeautifulSoup, Tag
 
+from steamcom.models import HistoryStatus
 from steamcom.exceptions import LoginRequired
 
 
@@ -149,3 +150,42 @@ def get_buy_orders_from_node(node: Tag) -> dict:
         }
         buy_orders_dict[order['order_id']] = order
     return buy_orders_dict
+
+
+def parse_history(history):
+    for event in history['events']:
+        if event['event_type'] == HistoryStatus.LISTED.value\
+                or event['event_type'] == HistoryStatus.CANCELED.value:
+            listing = history['listings'][event['listingid']]
+            price = listing['original_price'] / 100
+            currency_id = listing['currencyid']
+            asset_id = listing['asset']['id']
+            app_id = str(listing['asset']['appid'])
+            context_id = listing['asset']['contextid']
+            asset = history['assets'][app_id][context_id][asset_id]
+            event.update({'price': price, 'currency_id': currency_id,
+                         'asset': asset})
+        else:
+            purchase_id = event['listingid'] + '_' + event['purchaseid']
+            purchase = history['purchases'][purchase_id]
+            if event['event_type'] == HistoryStatus.PURCHASED:
+                currency_id = purchase['received_currencyid']
+                partner_currency_id = purchase['currencyid']
+                price = (purchase['paid_amount'] + purchase['paid_fee']) / 100
+            else:
+                currency_id = purchase['currencyid']
+                partner_currency_id = purchase['received_currencyid']
+                price = purchase['received_amount'] / 100
+            asset_id = purchase['asset']['id']
+            app_id = str(purchase['asset']['appid'])
+            context_id = purchase['asset']['contextid']
+            new_asset_id = purchase['asset']['new_id']
+            asset = history['assets'][app_id][context_id][asset_id]
+            event.update({
+                'price': price,
+                'currency_id': currency_id,
+                'partner_currency_id': partner_currency_id,
+                'new_asset_id': new_asset_id,
+                'asset': asset
+            })
+    return history['events']
