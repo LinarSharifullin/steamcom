@@ -193,6 +193,8 @@ class SteamMarket:
                                market_hash_name: str) -> None | dict:
         url = SteamUrl.COMMUNITY + '/market/listings/{}/{}'
         response = self.session.get(url.format(app_id, market_hash_name)).text
+        if 'market_listing_table_message' in response:
+            raise ApiException('No one is selling this item')
         if 'mbuyorder' in response:
             buy_orders = get_market_listings_from_html(response)['buy_orders']
             first_buy_order = list(buy_orders.keys())[0]
