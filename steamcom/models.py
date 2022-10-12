@@ -46,8 +46,8 @@ class Confirmation(NamedTuple):
 
 class HistoryStatus(enum.IntEnum):
     LISTED = 1
-    SOLD = 2
-    CANCELED = 3
+    CANCELED = 2
+    SOLD = 3
     PURCHASED = 4
 
 
