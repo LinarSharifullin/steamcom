@@ -328,5 +328,54 @@ Response
 }
 ```
 
+## get_my_history(events_value: int = 5000, delay: int = 3) -> dict:
+Response
+```python
+[
+    {
+        'asset': {
+            'actions': ...,
+            'amount': '0',
+            'app_icon': ...
+            'appid': 730,
+            'background_color': '',
+            'classid': '4839651026',
+            'commodity': 1,
+            'contextid': '2',
+            'currency': 0,
+            'descriptions': [...],
+            'icon_url': ...,
+            'icon_url_large': ...,
+            'id': '25979127616',
+            'instanceid': '188530139',
+            'market_actions': [...],
+            'market_hash_name': 'Sticker | jabbi (Glitter) | Antwerp 2022',
+            'market_name': 'Sticker | jabbi (Glitter) | Antwerp 2022',
+            'market_tradable_restriction': 7,
+            'marketable': 1,
+            'name': 'Sticker | jabbi (Glitter) | Antwerp 2022',
+            'name_color': 'D2D2D2',
+            'original_amount': '1',
+            'owner': 0,
+            'status': 4,
+            'tradable': 1,
+            'type': 'Remarkable Sticker',
+            'unowned_contextid': '2',
+            'unowned_id': '25979127616'},
+        'currency_id': '2005',
+        'date_event': '13 Oct',
+        'event_type': 4,
+        'listingid': '5152706284695898110',
+        'new_asset_id': '27404075264',   # from sold and purchased
+        'partner_currency_id': '2005',  # from sold and purchased
+        'price': 1.5,
+        'purchaseid': '5152706284695898111',
+        'steamid_actor': '76561199216758062',
+        'time_event': 1665657537,
+        'time_event_fraction': 310000000
+    }
+]
+```
+
 # fee_counter module functions
 ## count(price: float) -> int
