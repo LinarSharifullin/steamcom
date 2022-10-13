@@ -135,6 +135,7 @@ class SteamClient:
                         start_asset_id=start_asset_id)
                 except ApiException:
                     attempts -= 1
+                    time.sleep(delay)
                     continue
             else:
                 inventory = self.get_inventory_page(
