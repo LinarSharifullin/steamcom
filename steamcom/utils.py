@@ -112,6 +112,8 @@ def get_sell_listings_from_node(node: Tag) -> dict:
     sell_listings_dict = {}
     for listing_raw in sell_listings_raw:
         spans = listing_raw.select('span[title]')
+        if 'Sold!' in spans[0]:
+            continue
         created_date = listing_raw.findAll(
                 'div', {'class': 'market_listing_listed_date'})[0]
         year = ' ' + str(datetime.now().year)
