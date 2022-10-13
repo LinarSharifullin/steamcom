@@ -118,9 +118,10 @@ class SteamClient:
 
     @login_required
     def get_my_inventory(self, app_id: str, context_id: str,
-                         delay: int = 3) -> dict:
+                         delay: int = 3, attempts: int = 3) -> dict:
         steam_id = self.steam_id
-        return self.get_partner_inventory(steam_id, app_id, context_id, delay)
+        return self.get_partner_inventory(steam_id, app_id, context_id, delay,
+                                          attempts)
 
     def get_partner_inventory(self, partner_steam_id: str, app_id: str,
                               context_id: str, delay: int = 3,
