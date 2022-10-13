@@ -123,13 +123,23 @@ class SteamClient:
         return self.get_partner_inventory(steam_id, app_id, context_id, delay)
 
     def get_partner_inventory(self, partner_steam_id: str, app_id: str,
-                              context_id: str, delay: int = 3) -> dict:
+                              context_id: str, delay: int = 3,
+                              attempts: int = 3) -> dict:
         start_asset_id = None
         full_inventory = {}
         while True:
-            inventory = self.get_inventory_page(
-                partner_steam_id, app_id, context_id,
-                start_asset_id=start_asset_id)
+            if attempts > 0:
+                try:
+                    inventory = self.get_inventory_page(
+                        partner_steam_id, app_id, context_id,
+                        start_asset_id=start_asset_id)
+                except ApiException:
+                    attempts -= 1
+                    continue
+            else:
+                inventory = self.get_inventory_page(
+                    partner_steam_id, app_id, context_id,
+                    start_asset_id=start_asset_id)
             if not full_inventory:
                 full_inventory['assets'] = inventory['assets']
                 full_inventory['total_inventory_count']\
