@@ -9,7 +9,7 @@ from steamcom.utils import (login_required, text_between,
                             get_market_listings_from_html,
                             merge_items_with_descriptions_from_listing,
                             get_market_sell_listings_from_api, parse_history)
-from steamcom.models import SteamUrl, Result
+from steamcom.models import SteamUrl
 from steamcom.exceptions import ApiException
 
 
@@ -183,9 +183,6 @@ class SteamMarket:
         response = self.session.post(
             SteamUrl.COMMUNITY + '/market/cancelbuyorder/',
             data, headers=headers).json()
-        if response.get("success") != Result.OK.value:
-            text = 'Problem canceling the order. success: '
-            raise ApiException(text + str(response.get("success")))
         return response
 
     @login_required
