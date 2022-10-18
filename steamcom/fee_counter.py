@@ -54,13 +54,13 @@ def sended(receivedAmount, publisherFee):
         'steam_fee': nSteamFee,
         'publisher_fee': nPublisherFee,
         'fees': nSteamFee + nPublisherFee,
-        'newAmount': int(nAmountToSend),
+        'buyer_pay': int(nAmountToSend),
         'amount': int(nAmountToSend),
-        'rAmount': receivedAmount
+        'seller_receive': receivedAmount
     }
 
 
 def count(price: float) -> int:
     priceInt = GetPriceValueAsInt(price)
     fees = CalculateFeeAmount(priceInt, 0.1)
-    return fees['rAmount']
+    return fees
