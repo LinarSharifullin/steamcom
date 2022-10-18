@@ -200,13 +200,22 @@ class SteamMarket:
         else:
             return None
 
-    def get_my_history(self, events_value: int = 5000, delay: int = 3) -> dict:
+    def get_my_history(self, events_value: int = 5000, delay: int = 3,
+                       attempts: int = 3) -> dict:
         pages = int(events_value/500)
         last_page_value = events_value % 500
         start = 0
         history = []
         while start-pages*500 < 0:
-            page = self._get_market_history_page(start)
+            if attempts > 0:
+                try:
+                    page = self._get_market_history_page(start)
+                except TypeError:
+                    time.sleep(delay)
+                    attempts -= 1
+                    continue
+            else:
+                page = self._get_market_history_page(start)
             start += 500
             for event in page:
                 if event not in history:
@@ -214,7 +223,18 @@ class SteamMarket:
             time.sleep(delay)
         else:
             if last_page_value > 0:
-                page = self._get_market_history_page(start, last_page_value)
+                while attempts > 0:
+                    try:
+                        page = self._get_market_history_page(
+                            start, last_page_value)
+                        break
+                    except TypeError:
+                        time.sleep(delay)
+                        attempts -= 1
+                        continue
+                else:
+                    page = self._get_market_history_page(
+                            start, last_page_value)
                 for event in page:
                     if event not in history:
                         history.append(event)
