@@ -189,7 +189,8 @@ class SteamMarket:
     def check_placed_buy_order(self, app_id: str,
                                market_hash_name: str) -> None | dict:
         url = SteamUrl.COMMUNITY + '/market/listings/{}/{}'
-        response = self.session.get(url.format(app_id, market_hash_name)).text
+        url_name = urllib.parse.quote(market_hash_name)
+        response = self.session.get(url.format(app_id, url_name)).text
         if 'market_listing_largeimage' not in response:
             raise ApiException('No one is selling this item')
         if 'mbuyorder' in response:
