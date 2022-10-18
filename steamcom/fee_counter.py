@@ -60,7 +60,7 @@ def sended(receivedAmount, publisherFee):
     }
 
 
-def count(price: float) -> int:
+def count(price: float) -> dict:
     priceInt = GetPriceValueAsInt(price)
     fees = CalculateFeeAmount(priceInt, 0.1)
     return fees

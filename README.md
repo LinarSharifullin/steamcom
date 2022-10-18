@@ -378,4 +378,8 @@ Response
 ```
 
 # fee_counter module functions
-## count(price: float) -> int
+## count(price: float) -> dict
+Reponse
+```python
+{'steam_fee': 30, 'publisher_fee': 58, 'fees': 87, 'buyer_pay': 676, 'amount': 677, 'seller_receive': 589}
+```
