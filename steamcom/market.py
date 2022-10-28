@@ -27,11 +27,14 @@ class SteamMarket:
         url = SteamUrl.COMMUNITY + '/market/pricehistory/'
         params = {'appid': app_id,
                   'market_hash_name': market_hash_name}
-        response = self.session.get(url, params=params).json()
-        if not response.get("success"):
+        response = self.session.get(url, params=params)
+        if 'application/json' not in response.headers.get('Content-Type', ''):
+            raise ApiException('Not returned body')
+        response_json = response.json()
+        if not response_json.get("success"):
             text = 'Problem getting price history the order. success: '
-            raise ApiException(text + str(response.get("success")))
-        return self._parse_graph(response['prices'])
+            raise ApiException(text + str(response_json.get("success")))
+        return self._parse_graph(response_json['prices'])
 
     def _parse_graph(self, graph):
         parsed_graph = {}
