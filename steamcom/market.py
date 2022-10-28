@@ -52,8 +52,8 @@ class SteamMarket:
     def get_orders_histogram(self, item_name_id: str) -> dict:
         url = SteamUrl.COMMUNITY + '/market/itemordershistogram/'
         params = {
-            'currency': self.currency_id,
             'language': 'english',
+            'currency': self.currency_id,
             'item_nameid': item_name_id
         }
         histogram = self.session.get(url, params=params).json()
