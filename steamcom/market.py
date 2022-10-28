@@ -50,7 +50,7 @@ class SteamMarket:
         return parsed_graph
 
     def get_orders_histogram(self, item_name_id: str) -> dict:
-        url = SteamUrl.COMMUNITY + '/market/itemordershistogram/'
+        url = SteamUrl.COMMUNITY + '/market/itemordershistogram'
         params = {
             'language': 'english',
             'currency': self.currency_id,
