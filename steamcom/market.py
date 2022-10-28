@@ -53,8 +53,10 @@ class SteamMarket:
             'language': 'en',
             'item_nameid': item_name_id
         }
-        response = self.session.get(url, params=params)
-        return self._parse_orders_histogram(response.json())
+        histogram = self.session.get(url, params=params).json()
+        if not histogram:
+            return ApiException('An empty response returned')
+        return self._parse_orders_histogram(histogram)
 
     def _parse_orders_histogram(self, histogram: dict) -> dict:
         orders = []
