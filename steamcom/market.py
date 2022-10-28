@@ -55,7 +55,7 @@ class SteamMarket:
         }
         histogram = self.session.get(url, params=params).json()
         if not histogram:
-            return ApiException('An empty response returned')
+            raise ApiException('An empty response returned')
         return self._parse_orders_histogram(histogram)
 
     def _parse_orders_histogram(self, histogram: dict) -> dict:
