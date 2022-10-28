@@ -53,7 +53,7 @@ class SteamMarket:
         url = SteamUrl.COMMUNITY + '/market/itemordershistogram/'
         params = {
             'currency': self.currency_id,
-            'language': 'en',
+            'language': 'english',
             'item_nameid': item_name_id
         }
         histogram = self.session.get(url, params=params).json()
