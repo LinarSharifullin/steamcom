@@ -216,27 +216,27 @@ class SteamMarket:
         while start-pages*500 < 0:
             if attempts > 0:
                 try:
+                    time.sleep(delay)
                     page = self._get_market_history_page(start)
                 except TypeError:
-                    time.sleep(delay)
                     attempts -= 1
                     continue
             else:
+                time.sleep(delay)
                 page = self._get_market_history_page(start)
             start += 500
             for event in page:
                 if event not in history:
                     history.append(event)
-            time.sleep(delay)
         else:
             if last_page_value > 0:
                 while attempts > 0:
                     try:
+                        time.sleep(delay)
                         page = self._get_market_history_page(
                             start, last_page_value)
                         break
                     except TypeError:
-                        time.sleep(delay)
                         attempts -= 1
                         continue
                 else:

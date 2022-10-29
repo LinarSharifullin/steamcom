@@ -132,14 +132,15 @@ class SteamClient:
         while True:
             if attempts > 0:
                 try:
+                    time.sleep(delay)
                     inventory = self.get_inventory_page(
                         partner_steam_id, app_id, context_id,
                         start_asset_id=start_asset_id)
                 except ApiException:
                     attempts -= 1
-                    time.sleep(delay)
                     continue
             else:
+                time.sleep(delay)
                 inventory = self.get_inventory_page(
                     partner_steam_id, app_id, context_id,
                     start_asset_id=start_asset_id)
@@ -154,7 +155,6 @@ class SteamClient:
                 start_asset_id = inventory['last_asset_id']
             else:
                 return full_inventory
-            time.sleep(delay)
 
     def get_inventory_page(self, partner_steam_id: str, app_id: str,
                            context_id: str, count: int = 5000,
