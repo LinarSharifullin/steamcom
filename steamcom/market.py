@@ -175,8 +175,8 @@ class SteamMarket:
         headers = {'Referer': SteamUrl.COMMUNITY + '/market/'}
         response = self.session.post(url, data=data, headers=headers)
         if not response.ok:
-            text = 'Problem removing the listing. http code: '
-            raise ApiException(text + response.status_code)
+            text = 'Problem removing the listing. http code: {}'
+            raise ApiException(text.format(response.status_code))
 
     @login_required
     def cancel_buy_order(self, buy_order_id: str) -> dict:
