@@ -148,8 +148,10 @@ class SteamMarket:
         headers = {'Referer': referer}
         response = self.session.post(
             SteamUrl.COMMUNITY + "/market/createbuyorder/", data,
-            headers=headers).json()
-        return response
+            headers=headers)
+        if 'application/json' not in response.headers.get('Content-Type', ''):
+            raise ApiException('Not returned body')
+        return response.json()
 
     @login_required
     def create_sell_order(self, asset_id: str, app_id: str, context_id: str,
