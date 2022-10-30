@@ -31,7 +31,9 @@ class SteamMarket:
         if 'application/json' not in response.headers.get('Content-Type', ''):
             raise ApiException('Not returned body')
         response_json = response.json()
-        if not response_json.get("success"):
+        if not response_json:
+            raise ApiException('An empty response returned')
+        elif not response_json.get("success"):
             text = 'Problem getting price history the order. success: '
             raise ApiException(text + str(response_json.get("success")))
         return self._parse_graph(response_json['prices'])
