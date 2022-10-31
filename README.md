@@ -153,13 +153,13 @@ print(secret_code) # KPI21
 ## get_price_history(app_id: str, market_hash_name: str) -> dict
 Return parsed graph dots:
 ```python
-{'Oct 05 2022': {
-    'dots': {
+{
+    'Oct 05 2022': {
         '21': {'price': 99.435, 'sales': 43},
         '22': {'price': 139.317, 'sales': 270},
-        '23': {'price': 162.369, 'sales': 480}}},
- 'Oct 06 2022': {
-    'dots': {
+        '23': {'price': 162.369, 'sales': 480}
+    },
+    'Oct 06 2022': {
         '00': {'price': 136.98, 'sales': 1591},
         '01': {'price': 95.765, 'sales': 2486},
         '02': {'price': 128.912, 'sales': 1166},
@@ -183,16 +183,18 @@ Return parsed graph dots:
         '20': {'price': 87.43, 'sales': 747},
         '21': {'price': 89.098, 'sales': 744},
         '22': {'price': 98.189, 'sales': 1210},
-        '23': {'price': 58.792, 'sales': 2255}}},
- 'Oct 07 2022': {
-    'dots': {
+        '23': {'price': 58.792, 'sales': 2255}
+    },
+    'Oct 07 2022': {
         '00': {'price': 53.943, 'sales': 3456},
         '01': {'price': 48.988, 'sales': 3294},
         '02': {'price': 44.246, 'sales': 3292},
         '03': {'price': 44.246, 'sales': 3058},
         '04': {'price': 47.308, 'sales': 2573},
         '05': {'price': 30.305, 'sales': 3619},
-        '06': {'price': 18.789, 'sales': 5698}}}}
+        '06': {'price': 18.789, 'sales': 5698}
+    }
+}
 ```
 
 ## get_orders_histogram(item_name_id: str) -> dict

@@ -46,9 +46,9 @@ class SteamMarket:
             price = dot[1]
             value = int(dot[2])
             if date not in parsed_graph:
-                parsed_graph[date] = {'dots': {}}
-            parsed_graph[date]['dots'][time] = {'price': price,
-                                                'sales': value}
+                parsed_graph[date] = {}
+            parsed_graph[date][time] = {'price': price,
+                                        'sales': value}
         return parsed_graph
 
     def get_orders_histogram(self, item_name_id: str) -> dict:
