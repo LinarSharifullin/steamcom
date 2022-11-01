@@ -197,7 +197,7 @@ Return parsed graph dots:
 }
 ```
 
-## get_orders_histogram(item_name_id: str) -> dict
+## get_orders_histogram(item_name_id: str, app_id: str, market_hash_name: str) -> dict
 Return parsed histogram dots:
 ```python
 {'buy_order_graph': [

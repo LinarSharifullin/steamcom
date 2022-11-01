@@ -1,3 +1,4 @@
+from datetime import datetime
 import requests
 import json
 import time
@@ -51,14 +52,37 @@ class SteamMarket:
                                         'sales': value}
         return parsed_graph
 
-    def get_orders_histogram(self, item_name_id: str) -> dict:
+    def get_orders_histogram(self, item_name_id: str, app_id: str,
+                             market_hash_name: str) -> dict:
         url = SteamUrl.COMMUNITY + '/market/itemordershistogram'
         params = {
+            'country': 'RU',
             'language': 'english',
             'currency': self.currency_id,
-            'item_nameid': item_name_id
+            'item_nameid': item_name_id,
+            'two_factor': 0
         }
-        histogram = self.session.get(url, params=params).json()
+        url_name = urllib.parse.quote(market_hash_name)
+        referer = f'{SteamUrl.COMMUNITY}/market/listings/{app_id}/{url_name}'
+        user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:105.0)'
+        user_agent += ' Gecko/20100101 Firefox/105.0'
+        time_now = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
+        headers = {
+            'Host': 'steamcommunity.com',
+            'User-Agent': user_agent,
+            'Accept': '*/*',
+            'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Connection': 'keep-alive',
+            'Referer': referer,
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin',
+            'If-Modified-Since': time_now
+        }
+        histogram = self.session.get(url, params=params,
+                                     headers=headers).json()
         if not histogram:
             raise ApiException('An empty response returned')
         return self._parse_orders_histogram(histogram)
