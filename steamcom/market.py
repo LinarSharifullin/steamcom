@@ -81,11 +81,13 @@ class SteamMarket:
             'Sec-Fetch-Site': 'same-origin',
             'If-Modified-Since': time_now
         }
-        histogram = self.session.get(url, params=params,
-                                     headers=headers).json()
-        if not histogram:
+        response = self.session.get(url, params=params, headers=headers)
+        if not response.ok:
+            text = 'Problem getting the histogram. http code: {}'
+            raise ApiException(text.format(response.status_code))
+        elif not response.json():
             raise ApiException('An empty response returned')
-        return self._parse_orders_histogram(histogram)
+        return self._parse_orders_histogram(response.json())
 
     def _parse_orders_histogram(self, histogram: dict) -> dict:
         orders = []
