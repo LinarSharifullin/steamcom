@@ -66,7 +66,7 @@ class SteamMarket:
         referer = f'{SteamUrl.COMMUNITY}/market/listings/{app_id}/{url_name}'
         user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:105.0)'
         user_agent += ' Gecko/20100101 Firefox/105.0'
-        time_now = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
+        time_now = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
         headers = {
             'Host': 'steamcommunity.com',
             'User-Agent': user_agent,
