@@ -162,6 +162,12 @@ def get_buy_orders_from_node(node: Tag) -> dict:
 
 
 def parse_history(history):
+    unowned_ids = {}
+    for app_id, app_data in history['assets'].items():
+        for context_id, context_data in app_data.items():
+            for asset, asset_data in context_data.items():
+                unowned_ids[asset_data['unowned_id']] = asset
+
     for event in history['events']:
         if event['event_type'] == HistoryStatus.LISTED.value\
                 or event['event_type'] == HistoryStatus.CANCELED.value:
@@ -189,7 +195,8 @@ def parse_history(history):
             app_id = str(purchase['asset']['appid'])
             context_id = purchase['asset']['contextid']
             new_asset_id = purchase['asset']['new_id']
-            asset = history['assets'][app_id][context_id][asset_id]
+            original_id = unowned_ids[asset_id]
+            asset = history['assets'][app_id][context_id][original_id]
             event.update({
                 'price': price,
                 'currency_id': currency_id,
