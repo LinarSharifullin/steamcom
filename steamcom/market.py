@@ -88,6 +88,9 @@ class SteamMarket:
             raise ApiException(text.format(response.status_code))
         elif not response.json():
             raise ApiException('An empty response returned')
+        elif 'buy_order_graph' not in response.json()\
+                or 'sell_order_graph' not in response.json():
+            raise ApiException('Buy or sell order graph not in body')
         return self._parse_orders_histogram(response.json())
 
     def _parse_orders_histogram(self, histogram: dict) -> dict:
