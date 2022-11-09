@@ -250,12 +250,20 @@ class SteamMarket:
                 try:
                     time.sleep(delay)
                     page = self._get_market_history_page(start)
-                except TypeError:
+                    text = 'History page {}/{} received'
+                    print(text.format(int(start/500)+1,
+                          pages+min(last_page_value, 1)))
+                except TypeError as e:
+                    exc_name = type(e). __name__
+                    print(f'{exc_name} during receiving the history page')
                     attempts -= 1
                     continue
             else:
                 time.sleep(delay)
                 page = self._get_market_history_page(start)
+                text = 'History page {}/{} received'
+                print(text.format(int(start/500)+1,
+                      pages+min(last_page_value, 1)))
             start += 500
             for event in page:
                 if event not in history:
@@ -267,13 +275,21 @@ class SteamMarket:
                         time.sleep(delay)
                         page = self._get_market_history_page(
                             start, last_page_value)
+                        text = 'History page {}/{} received'
+                        print(text.format(int(start/500)+1,
+                              pages+min(last_page_value, 1)))
                         break
-                    except TypeError:
+                    except TypeError as e:
+                        exc_name = type(e). __name__
+                        print(f'{exc_name} during receiving the history page')
                         attempts -= 1
                         continue
                 else:
                     page = self._get_market_history_page(
                             start, last_page_value)
+                    text = 'History page {}/{} received'
+                    print(text.format(int(start/500)+1,
+                          pages+min(last_page_value, 1)))
                 for event in page:
                     if event not in history:
                         history.append(event)
