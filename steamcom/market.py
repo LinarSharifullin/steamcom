@@ -253,7 +253,7 @@ class SteamMarket:
                     text = 'History page {}/{} received'
                     print(text.format(int(start/500)+1,
                           pages+min(last_page_value, 1)))
-                except TypeError as e:
+                except (TypeError, ApiException) as e:
                     exc_name = type(e). __name__
                     print(f'{exc_name} during receiving the history page')
                     attempts -= 1
@@ -279,7 +279,7 @@ class SteamMarket:
                         print(text.format(int(start/500)+1,
                               pages+min(last_page_value, 1)))
                         break
-                    except TypeError as e:
+                    except (TypeError, ApiException) as e:
                         exc_name = type(e). __name__
                         print(f'{exc_name} during receiving the history page')
                         attempts -= 1
@@ -304,4 +304,6 @@ class SteamMarket:
             'norender': 1
         }
         response = self.session.get(url, params=params).json()
+        if not response['total_count']:
+            raise ApiException('An empty response returned')
         return parse_history(response)
