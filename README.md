@@ -379,6 +379,9 @@ Response
 ]
 ```
 
+## get_my_history_up_to_date(self, date: datetime, delay: int = 3, attempts: int = 3) -> dict
+The response is the same as get_my_history
+
 # fee_counter module functions
 ## count(price: float) -> dict
 Reponse

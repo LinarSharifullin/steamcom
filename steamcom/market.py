@@ -285,6 +285,7 @@ class SteamMarket:
                         attempts -= 1
                         continue
                 else:
+                    time.sleep(delay)
                     page = self._get_market_history_page(
                             start, last_page_value)
                     text = 'History page {}/{} received'
@@ -293,6 +294,35 @@ class SteamMarket:
                 for event in page:
                     if event not in history:
                         history.append(event)
+        return history
+
+    def get_my_history_up_to_date(self, date: datetime, delay: int = 3,
+                                  attempts: int = 3) -> dict:
+        history = []
+        start = 0
+        while True:
+            if attempts > 0:
+                try:
+                    time.sleep(delay)
+                    page = self._get_market_history_page(start)
+                    print('History page received')
+                except (TypeError, ApiException) as e:
+                    exc_name = type(e). __name__
+                    print(f'{exc_name} during receiving the history page')
+                    attempts -= 1
+                    continue
+            else:
+                time.sleep(delay)
+                page = self._get_market_history_page(start)
+                print('History page received')
+            start += 500
+            for event in page:
+                event_time = datetime.fromtimestamp(event['time_event'])
+                if event not in history:
+                    if event_time >= date:
+                        history.append(event)
+                    else:
+                        return history
         return history
 
     def _get_market_history_page(self, start: int = 0,
