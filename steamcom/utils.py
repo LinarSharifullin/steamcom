@@ -198,7 +198,11 @@ def parse_history(history):
             app_id = str(purchase['asset']['appid'])
             context_id = purchase['asset']['contextid']
             new_asset_id = purchase['asset']['new_id']
-            original_id = unowned_ids[asset_id]
+            if 'asset_id' in unowned_ids:
+                original_id = unowned_ids[asset_id]
+            else:
+                listing = history['listings'][event['listingid']]
+                original_id = listing['asset']['id']
             asset = history['assets'][app_id][context_id][original_id]
             event.update({
                 'price': price,
