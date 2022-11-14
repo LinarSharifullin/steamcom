@@ -166,7 +166,10 @@ def parse_history(history):
     for app_id, app_data in history['assets'].items():
         for context_id, context_data in app_data.items():
             for asset, asset_data in context_data.items():
-                unowned_ids[asset_data['unowned_id']] = asset
+                if 'unowned_id' in asset_data:
+                    unowned_ids[asset_data['unowned_id']] = asset
+                else:
+                    unowned_ids[asset] = asset
 
     for event in history['events']:
         if event['event_type'] == HistoryStatus.LISTED.value\
