@@ -199,8 +199,10 @@ class SteamMarket:
         referer = f'{SteamUrl.COMMUNITY}/profiles/{self.steam_id}/inventory'
         headers = {'Referer': referer}
         response = self.session.post(SteamUrl.COMMUNITY + "/market/sellitem/",
-                                     data, headers=headers).json()
-        return response
+                                     data, headers=headers)
+        if 'application/json' not in response.headers.get('Content-Type', ''):
+            raise ApiException('Not returned body')
+        return response.json()
 
     @login_required
     def cancel_sell_order(self, sell_listing_id: str) -> None:
