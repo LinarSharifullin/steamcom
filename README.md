@@ -20,6 +20,7 @@
 * [melvyn2](https://github.com/melvyn2) for the [PySteamAuth](https://github.com/melvyn2/PySteamAuth) program, his code helped me implement multiple confirmations
 
 # Installation
+To do this, you need [git](https://git-scm.com/) installed
 ```console
 pip install git+https://github.com/LinarSharifullin/steamcom
 ```
