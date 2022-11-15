@@ -8,7 +8,7 @@ from os import urandom
 
 import requests
 
-from steamcom.exceptions import LoginFailed
+from steamcom.exceptions import LoginFailed, ApiException
 from steamcom.guard import generate_one_time_code
 from steamcom.models import SteamUrl
 
@@ -46,9 +46,12 @@ class LoginExecutor:
         return response
 
     def _fetch_rsa_params(self) -> tuple[rsa.key.PublicKey, str]:
-        key_response = self.session.post(
+        response = self.session.post(
             SteamUrl.COMMUNITY + '/login/getrsakey/',
-            data={'username': self.username}).json()
+            data={'username': self.username})
+        if 'application/json' not in response.headers.get('Content-Type', ''):
+            raise ApiException('Not returned body')
+        key_response = response.json()
         rsa_mod = int(key_response['publickey_mod'], 16)
         rsa_exp = int(key_response['publickey_exp'], 16)
         rsa_timestamp = key_response['timestamp']
