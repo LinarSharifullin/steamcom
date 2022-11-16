@@ -6,7 +6,7 @@ WALLET_FEE_PERCENT = 0.05
 WALLET_FEE_MINIMUM = 1
 
 
-def GetPriceValueAsInt(strAmount):
+def get_int_price(strAmount):
     if not strAmount:
         return 0
     elif strAmount < 0.03:
@@ -17,7 +17,7 @@ def GetPriceValueAsInt(strAmount):
     return nAmount
 
 
-def CalculateFeeAmount(amount, publisherFee):
+def calculate_fee_amount(amount, publisherFee):
     publisherFee = 0.1
     iterations = 0
     received = int((amount - int(WALLET_FEE_BASE)) / (
@@ -61,6 +61,6 @@ def sended(receivedAmount, publisherFee):
 
 
 def count(price: float) -> dict:
-    priceInt = GetPriceValueAsInt(price)
-    fees = CalculateFeeAmount(priceInt, 0.1)
+    priceInt = get_int_price(price)
+    fees = calculate_fee_amount(priceInt, 0.1)
     return fees
