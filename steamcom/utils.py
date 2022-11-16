@@ -212,3 +212,39 @@ def parse_history(history):
                 'asset': asset
             })
     return history['events']
+
+
+def parse_graph(graph: list) -> dict:
+    parsed_graph = {}
+    for dot in reversed(graph):
+        date = dot[0][:11]
+        time = dot[0][12:14]
+        price = dot[1]
+        value = int(dot[2])
+        if date not in parsed_graph:
+            parsed_graph[date] = {}
+        parsed_graph[date][time] = {'price': price,
+                                    'sales': value}
+    return parsed_graph
+
+
+def parse_orders_histogram(histogram: dict) -> dict:
+    orders = []
+    listings = []
+    previous_quantity = 0
+    for order in histogram['buy_order_graph']:
+        price = order[0]
+        quantity = order[1] - previous_quantity
+        previous_quantity = order[1]
+        orders.append({'price': price, 'quantity': quantity})
+    previous_quantity = 0
+    for listing in histogram['sell_order_graph']:
+        price = listing[0]
+        quantity = listing[1] - previous_quantity
+        previous_quantity = listing[1]
+        listings.append({'price': price, 'quantity': quantity})
+    parsed_histogram = {
+        'buy_order_graph': orders,
+        'sell_order_graph': listings
+    }
+    return parsed_histogram

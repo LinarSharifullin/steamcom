@@ -9,7 +9,8 @@ from steamcom.utils import (login_required, text_between,
                             get_listing_id_to_assets_address_from_html,
                             get_market_listings_from_html,
                             merge_items_with_descriptions_from_listing,
-                            get_market_sell_listings_from_api, parse_history)
+                            get_market_sell_listings_from_api, parse_history,
+                            parse_graph, parse_orders_histogram)
 from steamcom.models import SteamUrl
 from steamcom.exceptions import ApiException
 
@@ -37,20 +38,7 @@ class SteamMarket:
         elif not response_json.get("success"):
             text = 'Problem getting price history the order. success: '
             raise ApiException(text + str(response_json.get("success")))
-        return self._parse_graph(response_json['prices'])
-
-    def _parse_graph(self, graph):
-        parsed_graph = {}
-        for dot in reversed(graph):
-            date = dot[0][:11]
-            time = dot[0][12:14]
-            price = dot[1]
-            value = int(dot[2])
-            if date not in parsed_graph:
-                parsed_graph[date] = {}
-            parsed_graph[date][time] = {'price': price,
-                                        'sales': value}
-        return parsed_graph
+        return parse_graph(response_json['prices'])
 
     def get_orders_histogram(self, item_name_id: str, app_id: str,
                              market_hash_name: str,
@@ -91,28 +79,7 @@ class SteamMarket:
         elif 'buy_order_graph' not in response.json()\
                 or 'sell_order_graph' not in response.json():
             raise ApiException('Buy or sell order graph not in body')
-        return self._parse_orders_histogram(response.json())
-
-    def _parse_orders_histogram(self, histogram: dict) -> dict:
-        orders = []
-        listings = []
-        previous_quantity = 0
-        for order in histogram['buy_order_graph']:
-            price = order[0]
-            quantity = order[1] - previous_quantity
-            previous_quantity = order[1]
-            orders.append({'price': price, 'quantity': quantity})
-        previous_quantity = 0
-        for listing in histogram['sell_order_graph']:
-            price = listing[0]
-            quantity = listing[1] - previous_quantity
-            previous_quantity = listing[1]
-            listings.append({'price': price, 'quantity': quantity})
-        parsed_histogram = {
-            'buy_order_graph': orders,
-            'sell_order_graph': listings
-        }
-        return parsed_histogram
+        return parse_orders_histogram(response.json())
 
     @login_required
     def get_my_market_listings(self, delay: int = 3) -> dict:
