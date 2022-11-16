@@ -120,6 +120,7 @@ class SteamMarket:
         if response.status_code != 200:
             text = 'Problem getting the listings. http code: {}'
             raise ApiException(text.format(response.status_code))
+        print('Received market page')
         assets_descriptions = json.loads(
             text_between(response.text, 'var g_rgAssets = ', ';\r\n'))
         listing_id_to_assets_address = \
@@ -136,12 +137,14 @@ class SteamMarket:
                 response.text, listings_total, '</span>').replace(',', ''))
             if n_showing < n_total < 1000:
                 listings_2 = self._parse_listings(n_showing, -1)
+                print('Received listings')
                 listings['sell_listings']\
                     = listings['sell_listings'] | listings_2
             else:
                 for i in range(0, n_total, 100):
                     time.sleep(delay)
                     listings_2 = self._parse_listings(n_showing + i, 100)
+                    print(f'Received listings {i}/{n_total/100}')
                     listings['sell_listings']\
                         = listings['sell_listings'] | listings_2
         return listings
