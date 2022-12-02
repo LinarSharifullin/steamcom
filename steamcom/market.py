@@ -10,7 +10,8 @@ from steamcom.utils import (login_required, text_between,
                             get_market_listings_from_html,
                             merge_items_with_descriptions_from_listing,
                             get_market_sell_listings_from_api, parse_history,
-                            parse_graph, parse_orders_histogram)
+                            parse_graph, parse_orders_histogram,
+                            api_request)
 from steamcom.models import SteamUrl
 from steamcom.exceptions import ApiException
 
@@ -29,13 +30,8 @@ class SteamMarket:
         url = SteamUrl.COMMUNITY + '/market/pricehistory/'
         params = {'appid': app_id,
                   'market_hash_name': market_hash_name}
-        response = self.session.get(url, params=params)
-        if 'application/json' not in response.headers.get('Content-Type', ''):
-            raise ApiException('Not returned body')
-        response_json = response.json()
-        if not response_json:
-            raise ApiException('An empty response returned')
-        elif not response_json.get("success"):
+        response_json = api_request(self.session, url, params)
+        if not response_json.get("success"):
             text = 'Problem getting price history the order. success: '
             raise ApiException(text + str(response_json.get("success")))
         return parse_graph(response_json['prices'])
@@ -53,33 +49,16 @@ class SteamMarket:
         }
         url_name = urllib.parse.quote(market_hash_name)
         referer = f'{SteamUrl.COMMUNITY}/market/listings/{app_id}/{url_name}'
-        user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:105.0)'
-        user_agent += ' Gecko/20100101 Firefox/105.0'
         time_now = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
         headers = {
-            'Host': 'steamcommunity.com',
-            'User-Agent': user_agent,
-            'Accept': '*/*',
-            'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'X-Requested-With': 'XMLHttpRequest',
-            'Connection': 'keep-alive',
             'Referer': referer,
-            'Sec-Fetch-Dest': 'empty',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-origin',
             'If-Modified-Since': time_now
         }
-        response = self.session.get(url, params=params, headers=headers)
-        if response.status_code != 200:
-            text = 'Problem getting histogram. http code: {}'
-            raise ApiException(text.format(response.status_code))
-        elif not response.json():
-            raise ApiException('An empty response returned')
-        elif 'buy_order_graph' not in response.json()\
-                or 'sell_order_graph' not in response.json():
+        response = api_request(self.session, url, params, headers)
+        if 'buy_order_graph' not in response\
+                or 'sell_order_graph' not in response:
             raise ApiException('Buy or sell order graph not in body')
-        return parse_orders_histogram(response.json())
+        return parse_orders_histogram(response)
 
     @login_required
     def get_my_market_listings(self, delay: int = 3) -> dict:
@@ -119,11 +98,7 @@ class SteamMarket:
     def _parse_listings(self, start: int, count: int) -> dict:
         url = '{}/market/mylistings/render/?query=&start={}&count={}'\
             .format(SteamUrl.COMMUNITY, start, count)
-        response = self.session.get(url)
-        if response.status_code != 200:
-            text = 'Problem getting the listings. http code: {}'
-            raise ApiException(text.format(response.status_code))
-        jresp = response.json()
+        jresp = api_request(self.session, url)
         listing_id_to_assets_address =\
             get_listing_id_to_assets_address_from_html(
                 jresp.get('hovers'))
@@ -148,12 +123,10 @@ class SteamMarket:
         url_name = urllib.parse.quote(market_hash_name)
         referer = f'{SteamUrl.COMMUNITY}/market/listings/{app_id}/{url_name}'
         headers = {'Referer': referer}
-        response = self.session.post(
-            SteamUrl.COMMUNITY + "/market/createbuyorder/", data,
-            headers=headers)
-        if 'application/json' not in response.headers.get('Content-Type', ''):
-            raise ApiException('Not returned body')
-        return response.json()
+        url = SteamUrl.COMMUNITY + '/market/createbuyorder/'
+        response = api_request(self.session, url, headers=headers, data=data)
+
+        return response
 
     @login_required
     def create_sell_order(self, asset_id: str, app_id: str, context_id: str,
@@ -168,11 +141,9 @@ class SteamMarket:
         }
         referer = f'{SteamUrl.COMMUNITY}/profiles/{self.steam_id}/inventory'
         headers = {'Referer': referer}
-        response = self.session.post(SteamUrl.COMMUNITY + "/market/sellitem/",
-                                     data, headers=headers)
-        if 'application/json' not in response.headers.get('Content-Type', ''):
-            raise ApiException('Not returned body')
-        return response.json()
+        url = SteamUrl.COMMUNITY + '/market/sellitem/'
+        response = api_request(self.session, url, headers=headers, data=data)
+        return response
 
     @login_required
     def cancel_sell_order(self, sell_listing_id: str) -> None:
@@ -191,9 +162,8 @@ class SteamMarket:
             'buy_orderid': buy_order_id
         }
         headers = {'Referer': SteamUrl.COMMUNITY + '/market'}
-        response = self.session.post(
-            SteamUrl.COMMUNITY + '/market/cancelbuyorder/',
-            data, headers=headers).json()
+        url = SteamUrl.COMMUNITY + '/market/cancelbuyorder/'
+        response = api_request(self.session, url, headers=headers, data=data)
         return response
 
     @login_required
@@ -305,7 +275,7 @@ class SteamMarket:
             'count': count,
             'norender': 1
         }
-        response = self.session.get(url, params=params).json()
+        response = api_request(self.session, url, params)
         if not response['total_count']:
             raise ApiException('An empty response returned')
         return parse_history(response)

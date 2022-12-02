@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
-from steamcom.utils import (login_required, parse_price,
+from steamcom.utils import (login_required, parse_price, api_request,
                             merge_items_with_descriptions_from_inventory)
 from steamcom.models import SteamUrl
 from steamcom.exceptions import LoginFailed, SessionIsInvalid, ApiException
@@ -164,7 +164,7 @@ class SteamClient:
         params = {'l': 'english',
                   'count': count,
                   'start_assetid': start_asset_id}
-        response_dict = self.session.get(url, params=params).json()
+        response_dict = api_request(self.session, url, params)
         if 'success' not in response_dict or response_dict['success'] != 1:
             raise ApiException('Success value should be 1.')
         assets = merge_items_with_descriptions_from_inventory(

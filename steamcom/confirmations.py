@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 from steamcom.guard import generate_confirmation_key, generate_device_id
 from steamcom.models import ConfirmationTag, Confirmation, ConfirmationType
-from steamcom.utils import login_required
+from steamcom.utils import login_required, api_request
 
 
 class ConfirmationExecutor:
@@ -28,10 +28,10 @@ class ConfirmationExecutor:
         params['op'] = tag
         params['ck'] = confirmation.key
         params['cid'] = confirmation.conf_id
-        response = self.session.get(self.CONF_URL + '/ajaxop',
-                                    params=params)
+        url = self.CONF_URL + '/ajaxop'
+        response = api_request(self.session, url, params)
         try:
-            status = response.json()['success']
+            status = response['success']
         except requests.exceptions.JSONDecodeError:
             status = False
         return status

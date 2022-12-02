@@ -11,6 +11,7 @@ import requests
 from steamcom.exceptions import LoginFailed, ApiException
 from steamcom.guard import generate_one_time_code
 from steamcom.models import SteamUrl
+from steamcom.utils import api_request
 
 
 class LoginExecutor:
@@ -23,35 +24,32 @@ class LoginExecutor:
         self.steam_id = ''  # will be added after login requests
         self.session = session
 
-    def login(self) -> requests.Session:
+    def login(self) -> str:
         login_response = self._send_login_requests()
         self._check_for_captcha(login_response)
         self._assert_valid_credentials(login_response)
-        oauth_data = json.loads(login_response.json()['oauth'])
+        oauth_data = json.loads(login_response['oauth'])
         self.steam_id = oauth_data['steamid']
         wg_token = oauth_data['wgtoken']
         wg_token_secure = oauth_data['wgtoken_secure']
         self._set_cookies(wg_token, wg_token_secure)
         return self.steam_id
 
-    def _send_login_requests(self) -> requests.Response:
+    def _send_login_requests(self) -> dict:
         self._set_mobile_cookies()
         rsa_key, rsa_timestamp = self._fetch_rsa_params()
         encrypted_password = self._encrypt_password(rsa_key)
         request_data = self._prepare_login_request_data(
             encrypted_password, rsa_timestamp)
         url = SteamUrl.COMMUNITY + '/login/dologin'
-        response = self.session.post(url, data=request_data)
+        response = api_request(self.session, url, data=request_data)
         self._delete_mobile_cookies()
         return response
 
     def _fetch_rsa_params(self) -> tuple[rsa.key.PublicKey, str]:
-        response = self.session.post(
-            SteamUrl.COMMUNITY + '/login/getrsakey/',
-            data={'username': self.username})
-        if 'application/json' not in response.headers.get('Content-Type', ''):
-            raise ApiException('Not returned body')
-        key_response = response.json()
+        url = SteamUrl.COMMUNITY + '/login/getrsakey/'
+        key_response = api_request(
+            self.session, url, data={'username': self.username})
         rsa_mod = int(key_response['publickey_mod'], 16)
         rsa_exp = int(key_response['publickey_exp'], 16)
         rsa_timestamp = key_response['timestamp']
@@ -93,14 +91,14 @@ class LoginExecutor:
         self.session.cookies.pop('mobileClient', None)
 
     @staticmethod
-    def _check_for_captcha(login_response: requests.Response) -> None:
-        if login_response.json().get('captcha_needed', False):
+    def _check_for_captcha(login_response: dict) -> None:
+        if login_response.get('captcha_needed', False):
             raise LoginFailed('Captcha required')
 
     @staticmethod
-    def _assert_valid_credentials(login_response: requests.Response) -> None:
-        if not login_response.json()['success']:
-            message = login_response.json()['message']
+    def _assert_valid_credentials(login_response: dict) -> None:
+        if not login_response['success']:
+            message = login_response['message']
             raise LoginFailed(f'{message}')
 
     def _set_cookies(self, wg_token: str, wg_token_secure: str) -> None:
