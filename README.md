@@ -18,6 +18,7 @@
 * [bukson](https://github.com/bukson) for the [steampy](https://github.com/bukson/steampy) library, in fact, I took more than 50% of the code from him
 * [rossengeorgiev](https://github.com/rossengeorgiev) for the [steam](https://github.com/ValvePython/steam) library, in it I looked at how to implement a mobile web session
 * [melvyn2](https://github.com/melvyn2) for the [PySteamAuth](https://github.com/melvyn2/PySteamAuth) program, his code helped me implement multiple confirmations
+* [DoctorMcKay](https://github.com/DoctorMcKay) for his libraries, which I also turned to during development
 
 # Installation
 To do this, you need [git](https://git-scm.com/) installed
