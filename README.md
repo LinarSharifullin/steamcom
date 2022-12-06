@@ -100,6 +100,24 @@ The response is the same as get_partner_inventory
 
 ## get_wallet_balance() -> float
 
+## send_offer_with_url(my_assets: dict, them_assets: dict, trade_offer_url: str, message: str = '') -> dict
+my_assets and them_assets need send in format returned in functions what get inventories:
+```python
+[
+    '12176056772': {
+        'amount': '1',
+        'appid': 440,
+        'contextid': '2',
+        ...
+    }
+]
+```
+
+response example:
+```python
+{'tradeofferid': '5583701352', 'needs_mobile_confirmation': True, 'needs_email_confirmation': False, 'email_domain': 'google.com'}
+```
+
 # ConfirmationExecutor Methods
 ## get_confirmations() -> list[Confirmation]
 ```python

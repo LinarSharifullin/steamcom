@@ -1,6 +1,8 @@
 import re
 import time
+import json
 from typing import Mapping
+import urllib.parse as urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -8,7 +10,9 @@ from bs4 import BeautifulSoup
 from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
 from steamcom.utils import (login_required, parse_price, api_request,
-                            merge_items_with_descriptions_from_inventory)
+                            merge_items_with_descriptions_from_inventory,
+                            get_key_value_from_url, account_id_to_steam_id,
+                            create_offer_dict)
 from steamcom.models import SteamUrl
 from steamcom.exceptions import LoginFailed, SessionIsInvalid, ApiException
 from steamcom.market import SteamMarket
@@ -188,3 +192,28 @@ class SteamClient:
         response_soup = BeautifulSoup(response.text, "html.parser")
         balance = response_soup.find(id='header_wallet_balance').string
         return parse_price(balance)
+
+    @login_required
+    def send_offer_with_url(self, my_assets: dict, them_assets: dict,
+                            trade_offer_url: str, message: str = '') -> dict:
+        token = get_key_value_from_url(trade_offer_url, 'token')
+        partner_account_id = get_key_value_from_url(trade_offer_url, 'partner')
+        partner_steam_id = account_id_to_steam_id(partner_account_id)
+        offer = create_offer_dict(my_assets, them_assets)
+        session_id = self.session.cookies.get_dict()['sessionid']
+        url = SteamUrl.COMMUNITY + '/tradeoffer/new/send'
+        server_id = 1
+        trade_offer_create_params = {'trade_offer_access_token': token}
+        params = {
+            'sessionid': session_id,
+            'serverid': server_id,
+            'partner': partner_steam_id,
+            'tradeoffermessage': message,
+            'json_tradeoffer': json.dumps(offer),
+            'captcha': '',
+            'trade_offer_create_params': json.dumps(trade_offer_create_params)
+        }
+        headers = {'Referer': SteamUrl.COMMUNITY\
+                        + urlparse.urlparse(trade_offer_url).path,
+                   'Origin': SteamUrl.COMMUNITY}
+        return api_request(self.session, url, headers=headers, data=params)

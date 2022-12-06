@@ -1,8 +1,9 @@
 import copy
 import re
+import struct
 from typing import List
 from datetime import datetime
-from urllib.parse import unquote
+import urllib.parse as urlparse
 from requests import Session
 
 from bs4 import BeautifulSoup, Tag
@@ -155,8 +156,8 @@ def get_buy_orders_from_node(node: Tag) -> dict:
             'price': parse_price(qnt_price_raw[1].strip()),
             'item_name': order.a.text,
             'item_link': item_link,
-            'market_hash_name': unquote(item_link.split('/')[-1],
-                                        encoding='utf-8', errors='replace')
+            'market_hash_name': urlparse.unquote(
+                item_link.split('/')[-1], encoding='utf-8', errors='replace')
         }
         buy_orders_dict[order['order_id']] = order
     return buy_orders_dict
@@ -282,3 +283,48 @@ def api_request(session: Session, url: str, params: dict = None,
     if not response_json:
         raise ApiException('An empty response returned')
     return response_json
+
+
+def get_key_value_from_url(url: str, key: str, case_sensitive: bool=True) -> str:
+    params = urlparse.urlparse(url).query
+    if case_sensitive:
+        return urlparse.parse_qs(params)[key][0]
+    else:
+        return CaseInsensitiveDict(urlparse.parse_qs(params))[key][0]
+
+
+def account_id_to_steam_id(account_id: str) -> str:
+    first_bytes = int(account_id).to_bytes(4, byteorder='big')
+    last_bytes = 0x1100001.to_bytes(4, byteorder='big')
+    return str(struct.unpack('>Q', last_bytes + first_bytes)[0])
+
+
+def create_offer_dict(my_items: list, them_items: list) -> dict:
+    return {
+        'newversion': True,
+        'version': 4,
+        'me': {
+            'assets': convert_assets_from_inventory_to_offer_format(my_items),
+            'currency': [],
+            'ready': False
+        },
+        'them': {
+            'assets': convert_assets_from_inventory_to_offer_format(
+                them_items),
+            'currency': [],
+            'ready': False
+        }
+    }
+
+
+def convert_assets_from_inventory_to_offer_format(
+        inventory_format: dict) -> dict:
+    offer_format = []
+    for asset, asset_data in inventory_format.items():
+        offer_format.append({
+            'appid': asset_data['appid'],
+            'contextid': asset_data['contextid'],
+            'amount': asset_data['amount'],
+            'assetid': asset
+        })
+    return offer_format
