@@ -14,6 +14,8 @@
 
 * [fee_counter module functions](https://github.com/LinarSharifullin/steamcom#fee_counter-module-functions)
 
+Also you can see see some basic examples in folder [examples](https://github.com/LinarSharifullin/steamcom/tree/main/examples)
+
 # Credits
 * [bukson](https://github.com/bukson) for the [steampy](https://github.com/bukson/steampy) library, in fact, I took more than 50% of the code from him
 * [rossengeorgiev](https://github.com/rossengeorgiev) for the [steam](https://github.com/ValvePython/steam) library, in it I looked at how to implement a mobile web session
