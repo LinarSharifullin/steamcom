@@ -90,7 +90,7 @@ class SteamMarket:
                 for i in range(0, n_total, 100):
                     time.sleep(delay)
                     listings_2 = self._parse_listings(n_showing + i, 100)
-                    print(f'Received listings {i}/{n_total/100}')
+                    print(f'Received listings {i}/{n_total}')
                     listings['sell_listings']\
                         = listings['sell_listings'] | listings_2
         return listings
