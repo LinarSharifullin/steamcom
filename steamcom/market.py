@@ -130,13 +130,13 @@ class SteamMarket:
 
     @login_required
     def create_sell_order(self, asset_id: str, app_id: str, context_id: str,
-                          money_to_receive: str, amount: int = 1) -> dict:
+                          money_to_receive: str) -> dict:
         data = {
             'assetid': asset_id,
             'sessionid': self.session.cookies.get_dict()['sessionid'],
             'contextid': context_id,
             'appid': app_id,
-            'amount': amount,
+            'amount': 1,
             'price': money_to_receive
         }
         referer = f'{SteamUrl.COMMUNITY}/profiles/{self.steam_id}/inventory'

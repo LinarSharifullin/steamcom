@@ -319,7 +319,7 @@ Reponse
 {'success': 1, 'buy_orderid': '5465633972'}
 ```
 
-## create_sell_order(asset_id: str, app_id: str, context_id: str, money_to_receive: str, amount: int = 1) -> dict:
+## create_sell_order(asset_id: str, app_id: str, context_id: str, money_to_receive: str) -> dict:
 Response
 ```python
 {
