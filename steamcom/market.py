@@ -52,8 +52,7 @@ class SteamMarket:
         referer = f'{SteamUrl.COMMUNITY}/market/listings/{app_id}/{url_name}'
         time_now = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
         headers = {
-            'Referer': referer,
-            'If-Modified-Since': time_now
+            'Referer': referer
         }
         response = api_request(self.session, url, params, headers)
         if 'buy_order_graph' not in response\
