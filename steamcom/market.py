@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import UNION
+from typing import Union
 import requests
 import json
 import time
