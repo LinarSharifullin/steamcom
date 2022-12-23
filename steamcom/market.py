@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import UNION
 import requests
 import json
 import time
@@ -168,7 +169,7 @@ class SteamMarket:
 
     @login_required
     def check_placed_buy_order(self, app_id: str,
-                               market_hash_name: str) -> None | dict:
+                               market_hash_name: str) -> Union[None, dict]:
         url = SteamUrl.COMMUNITY + '/market/listings/{}/{}'
         url_name = urllib.parse.quote(market_hash_name)
         response = self.session.get(url.format(app_id, url_name)).text
