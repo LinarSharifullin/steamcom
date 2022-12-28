@@ -187,11 +187,11 @@ class SteamClient:
 
     @login_required
     def get_wallet_balance(self) -> float:
-        url = SteamUrl.STORE + '/account/history/'
+        url = SteamUrl.STORE + '/account/'
         response = self.session.get(url)
-        response_soup = BeautifulSoup(response.text, "html.parser")
-        balance = response_soup.find(id='header_wallet_balance').string
-        return parse_price(balance)
+        response_soup = BeautifulSoup(response.text, 'html.parser')
+        balance = response_soup.find(href=SteamUrl.STORE + '/account/history/')
+        return parse_price(balance.text)
 
     @login_required
     def send_offer_with_url(self, my_assets: dict, them_assets: dict,
