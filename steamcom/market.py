@@ -143,6 +143,8 @@ class SteamMarket:
         headers = {'Referer': referer}
         url = SteamUrl.COMMUNITY + '/market/sellitem/'
         response = api_request(self.session, url, headers=headers, data=data)
+        if not response['success']:
+            raise ApiException(response['message'])
         return response
 
     @login_required
