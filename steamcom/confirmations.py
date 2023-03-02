@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from steamcom.guard import generate_confirmation_key, generate_device_id
 from steamcom.models import ConfirmationTag, Confirmation, ConfirmationType
 from steamcom.utils import login_required, api_request
+from exceptions import ApiException
 
 
 class ConfirmationExecutor:
@@ -61,6 +62,8 @@ class ConfirmationExecutor:
         if soup.select('#mobileconf_empty'):
             return confirmations
         container = soup.find(id="mobileconf_list")
+        if not container:
+            raise ApiException('An empty response returned')
         entries = container.find_all(class_="mobileconf_list_entry")
         for entry in entries:
             description = entry.select(
