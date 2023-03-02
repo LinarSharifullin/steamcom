@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from steamcom.guard import generate_confirmation_key, generate_device_id
 from steamcom.models import ConfirmationTag, Confirmation, ConfirmationType
 from steamcom.utils import login_required, api_request
-from exceptions import ApiException
+from steamcom.exceptions import ApiException
 
 
 class ConfirmationExecutor:
