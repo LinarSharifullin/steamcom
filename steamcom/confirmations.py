@@ -105,9 +105,8 @@ class ConfirmationExecutor:
         return params
 
     @login_required
-    def allow_all_confirmations(self, types: Iterable[ConfirmationType],
-                                delay: int = 3) -> None:
-        time.sleep(delay)
+    def allow_all_confirmations(self, types: Iterable[ConfirmationType])\
+            -> None:
         confirmations = self.get_confirmations()
         selected_confirmations = []
         for confirmation in confirmations:
