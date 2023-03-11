@@ -13,7 +13,7 @@ from steamcom.utils import (login_required, text_between,
                             get_market_sell_listings_from_api, parse_history,
                             parse_graph, parse_orders_histogram,
                             api_request)
-from steamcom.models import SteamUrl
+from steamcom.models import SteamUrl, Result
 from steamcom.exceptions import ApiException
 
 
@@ -125,8 +125,10 @@ class SteamMarket:
         headers = {'Referer': referer}
         url = SteamUrl.COMMUNITY + '/market/createbuyorder/'
         response = api_request(self.session, url, headers=headers, data=data)
-
-        return response
+        if response['success'] == Result.OK.value:
+            return response
+        else:
+            raise ApiException()
 
     @login_required
     def create_sell_order(self, asset_id: str, app_id: str, context_id: str,
