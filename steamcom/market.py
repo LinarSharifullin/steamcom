@@ -128,7 +128,7 @@ class SteamMarket:
         if response['success'] == Result.OK.value:
             return response
         else:
-            raise ApiException()
+            raise ApiException
 
     @login_required
     def create_sell_order(self, asset_id: str, app_id: str, context_id: str,
