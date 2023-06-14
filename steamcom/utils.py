@@ -258,7 +258,6 @@ def api_request(session: Session, url: str, params: dict = None,
     user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:105.0)'
     user_agent += ' Gecko/20100101 Firefox/105.0'
     default_headers = {
-            'Host': 'steamcommunity.com',
             'User-Agent': user_agent,
             'Accept': '*/*',
             'Accept-Language': 'en-US,en;q=0.9',
