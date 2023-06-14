@@ -8,7 +8,7 @@ from os import urandom
 
 import requests
 
-from steamcom.exceptions import LoginFailed, ApiException
+from steamcom.exceptions import LoginFailed
 from steamcom.guard import generate_one_time_code
 from steamcom.models import SteamUrl
 from steamcom.utils import api_request
@@ -28,11 +28,7 @@ class LoginExecutor:
         login_response = self._send_login_requests()
         self._check_for_captcha(login_response)
         self._assert_valid_credentials(login_response)
-        oauth_data = json.loads(login_response['oauth'])
-        self.steam_id = oauth_data['steamid']
-        wg_token = oauth_data['wgtoken']
-        wg_token_secure = oauth_data['wgtoken_secure']
-        self._set_cookies(wg_token, wg_token_secure)
+        self.steam_id = login_response['transfer_parameters']['steamid']
         return self.steam_id
 
     def _send_login_requests(self) -> dict:
@@ -46,13 +42,21 @@ class LoginExecutor:
         self._delete_mobile_cookies()
         return response
 
-    def _fetch_rsa_params(self) -> tuple[rsa.key.PublicKey, str]:
-        url = SteamUrl.COMMUNITY + '/login/getrsakey/'
-        key_response = api_request(
-            self.session, url, data={'username': self.username})
-        rsa_mod = int(key_response['publickey_mod'], 16)
-        rsa_exp = int(key_response['publickey_exp'], 16)
-        rsa_timestamp = key_response['timestamp']
+    def _fetch_rsa_params(self) -> dict:
+        service = 'IAuthenticationService'
+        endpoint = 'GetPasswordRSAPublicKey'
+        version = 'v1'
+        url = f'{SteamUrl.API}/{service}/{endpoint}/{version}'
+        # all requests from the login page use the same "Referer" and "Origin"
+        headers = {
+            "Referer": SteamUrl.COMMUNITY + '/',
+            "Origin": SteamUrl.COMMUNITY
+        }
+        params = {'account_name': self.username}
+        key_response = api_request(self.session, url, params, headers)
+        rsa_mod = int(key_response['response']['publickey_mod'], 16)
+        rsa_exp = int(key_response['response']['publickey_exp'], 16)
+        rsa_timestamp = key_response['response']['timestamp']
         return rsa.PublicKey(rsa_mod, rsa_exp), rsa_timestamp
 
     def _encrypt_password(self, rsa_key: rsa.key.PublicKey)\
