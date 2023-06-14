@@ -60,11 +60,9 @@ class SteamClient:
         cookies = self.session.cookies.get_dict()
         extracted_session = {
             'steamid': self.steam_id,
-            'currencyid': self.currency_id,
-            'sessionid': cookies['sessionid'],
-            'steamLogin': cookies['steamLogin'],
-            'steamLoginSecure': cookies['steamLoginSecure']
+            'currencyid': self.currency_id
         }
+        extracted_session.update(cookies)
         return extracted_session
 
     def load_session(self, extracted_session: Mapping[str, str]) -> None:
@@ -93,15 +91,9 @@ class SteamClient:
                 self.steam_id = value
             elif unformatted_key == 'currencyid':
                 self.currency_id = value
-            elif unformatted_key == 'sessionid':
-                set_cookie('sessionid', value, domain=community_url)
-                set_cookie('sessionid', value, domain=store_url)
-            elif unformatted_key == 'steamlogin':
-                set_cookie('steamLogin', value, domain=community_url)
-                set_cookie('steamLogin', value, domain=store_url)
-            elif unformatted_key == 'steamloginsecure':
-                set_cookie('steamLoginSecure', value, domain=community_url)
-                set_cookie('steamLoginSecure', value, domain=store_url)
+            else:
+                set_cookie(key, value, domain=community_url)
+                set_cookie(key, value, domain=store_url)
 
     def _change_login_executed_fields(self, status: bool) -> None:
         if status:
