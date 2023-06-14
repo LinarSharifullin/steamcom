@@ -4,9 +4,10 @@ import struct
 from typing import List
 from datetime import datetime
 import urllib.parse as urlparse
-from requests import Session
+from http import HTTPStatus
 
 from bs4 import BeautifulSoup, Tag
+from requests import Session
 
 from steamcom.models import HistoryStatus
 from steamcom.exceptions import LoginRequired, ApiException
@@ -272,10 +273,10 @@ def api_request(session: Session, url: str, params: dict = None,
         default_headers.update(headers)
     if data:
         response = session.post(url, params=params, headers=default_headers,
-            data=data)
+                                data=data)
     else:
         response = session.get(url, params=params, headers=default_headers)
-    if response.status_code != 200:
+    if response.status_code != HTTPStatus.OK:
         raise ApiException(f'HTTP status code: {response.status_code}')
     if 'application/json' not in response.headers.get('Content-Type', ''):
         raise ApiException('Not returned body')
@@ -285,7 +286,8 @@ def api_request(session: Session, url: str, params: dict = None,
     return response_json
 
 
-def get_key_value_from_url(url: str, key: str, case_sensitive: bool=True) -> str:
+def get_key_value_from_url(url: str, key: str, case_sensitive: bool = True)\
+        -> str:
     params = urlparse.urlparse(url).query
     if case_sensitive:
         return urlparse.parse_qs(params)[key][0]
