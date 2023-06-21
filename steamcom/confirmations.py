@@ -2,12 +2,11 @@ import time
 from typing import Iterable
 
 import requests
-from bs4 import BeautifulSoup
 
 from steamcom.guard import generate_confirmation_key, generate_device_id
-from steamcom.models import ConfirmationTag, Confirmation, ConfirmationType
+from steamcom.models import (ConfirmationTag, Confirmation, ConfirmationType,
+                             SteamUrl)
 from steamcom.utils import login_required, api_request
-from steamcom.exceptions import ApiException
 
 
 class ConfirmationExecutor:
@@ -27,8 +26,8 @@ class ConfirmationExecutor:
             else ConfirmationTag.CANCEL
         params = self._create_confirmation_params(tag)
         params['op'] = tag
-        params['ck'] = confirmation.key
-        params['cid'] = confirmation.conf_id
+        params['ck'] = confirmation.nonce
+        params['cid'] = confirmation.id
         url = self.CONF_URL + '/ajaxop'
         response = api_request(self.session, url, params)
         try:
@@ -44,8 +43,8 @@ class ConfirmationExecutor:
             else ConfirmationTag.CANCEL
         params = self._create_confirmation_params(tag)
         params['op'] = tag
-        params['ck[]'] = [i.key for i in confirmations]
-        params['cid[]'] = [i.conf_id for i in confirmations]
+        params['ck[]'] = [i.nonce for i in confirmations]
+        params['cid[]'] = [i.id for i in confirmations]
         response = self.session.post(
             self.CONF_URL + '/multiajaxop', data=params)
         try:
@@ -58,36 +57,29 @@ class ConfirmationExecutor:
     def get_confirmations(self) -> list[Confirmation]:
         confirmations: list[Confirmation] = []
         confirmations_page = self._fetch_confirmations_page()
-        soup = BeautifulSoup(confirmations_page.text, 'html.parser')
-        if soup.select('#mobileconf_empty'):
-            return confirmations
-        container = soup.find(id="mobileconf_list")
-        if not container:
-            raise ApiException('An empty response returned')
-        entries = container.find_all(class_="mobileconf_list_entry")
-        for entry in entries:
-            description = entry.select(
-                ".mobileconf_list_entry_description > div")
-            img_list = entry.select(".mobileconf_list_entry_icon img")
-            img = img_list[0] if img_list else None
+        for conf in confirmations_page['conf']:
             confirmations.append(Confirmation(
-                conf_id=entry['data-confid'],
-                conf_type=ConfirmationType(int(entry['data-type'])),
-                data_accept=entry['data-accept'],
-                creator=entry['data-creator'],
-                key=entry['data-key'],
-                title=description[0].string,
-                receiving=description[1].string,
-                time=description[2].string,
-                icon=img['src'] if img and img['src'] else "",
+                type=ConfirmationType(int(conf['type'])),
+                type_name=conf['type_name'],
+                id=conf['id'],
+                creator_id=conf['creator_id'],
+                nonce=conf['nonce'],
+                creation_time=conf['creation_time'],
+                cancel=conf['cancel'],
+                accept=conf['accept'],
+                icon=conf['icon'],
+                multi=conf['multi'],
+                headline=conf['headline'],
+                summary=conf['summary'],
+                warn=conf['warn']
             ))
         return confirmations
 
     def _fetch_confirmations_page(self) -> requests.Response:
+        url = self.CONF_URL + '/getlist'
         tag = ConfirmationTag.CONF
         params = self._create_confirmation_params(tag)
-        response = self.session.get(self.CONF_URL + '/getlist', params=params)
-        return response
+        return api_request(self.session, url, params=params)
 
     def _create_confirmation_params(self, tag: str) -> dict[str, str]:
         timestamp = int(time.time())
@@ -110,6 +102,6 @@ class ConfirmationExecutor:
         confirmations = self.get_confirmations()
         selected_confirmations = []
         for confirmation in confirmations:
-            if confirmation.conf_type in types:
+            if confirmation.type in types:
                 selected_confirmations.append(confirmation)
         self.respond_to_confirmations(selected_confirmations)

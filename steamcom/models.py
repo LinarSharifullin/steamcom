@@ -23,25 +23,33 @@ class ConfirmationType(enum.IntEnum):
 
 
 class Confirmation(NamedTuple):
-    conf_id: str
-    conf_type: ConfirmationType
-    data_accept: str
-    creator: str
-    key: str
-    title: str
-    receiving: str
-    time: str
+    type: ConfirmationType
+    type_name: str
+    id: str
+    creator_id: str
+    nonce: str
+    creation_time: str
+    cancel: str
+    accept: str
     icon: str
+    multi: bool
+    headline: str
+    summary: dict
+    warn: None
 
     def __str__(self) -> str:
-        if not self.title:
-            return f'Unknown {self.conf_type.name}'
-        return f'Confirmation: {self.title}'
+        if not self.summary:
+            if not self.headline:
+                return f'Unknown {self.type.name}'
+            return self.headline
+        return f'Confirmation: {self.summary[0]}'
 
     def __repr__(self) -> str:
-        if not self.title:
-            return f'Unknown {self.conf_type.name}'
-        return f'Confirmation: {self.title}'
+        if not self.summary:
+            if not self.headline:
+                return f'Unknown {self.type.name}'
+            return self.headline
+        return f'Confirmation: {self.summary[0]}'
 
 
 class HistoryStatus(enum.IntEnum):
