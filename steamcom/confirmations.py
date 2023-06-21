@@ -11,7 +11,7 @@ from steamcom.exceptions import ApiException
 
 
 class ConfirmationExecutor:
-    CONF_URL = "https://steamcommunity.com/mobileconf"
+    CONF_URL = SteamUrl.COMMUNITY + '/mobileconf'
 
     def __init__(self, identity_secret: str, steam_id: str,
                  session: requests.Session) -> None:
