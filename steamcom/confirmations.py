@@ -86,7 +86,7 @@ class ConfirmationExecutor:
     def _fetch_confirmations_page(self) -> requests.Response:
         tag = ConfirmationTag.CONF
         params = self._create_confirmation_params(tag)
-        response = self.session.get(self.CONF_URL + '/conf', params=params)
+        response = self.session.get(self.CONF_URL + '/getlist', params=params)
         return response
 
     def _create_confirmation_params(self, tag: str) -> dict[str, str]:
@@ -99,7 +99,7 @@ class ConfirmationExecutor:
             'a': self.steam_id,
             'k': confirmation_key,
             't': timestamp,
-            'm': 'android',
+            'm': 'react',
             'tag': tag
         }
         return params
