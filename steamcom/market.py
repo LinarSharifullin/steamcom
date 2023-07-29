@@ -50,7 +50,6 @@ class SteamMarket:
         }
         url_name = urllib.parse.quote(market_hash_name)
         referer = f'{SteamUrl.COMMUNITY}/market/listings/{app_id}/{url_name}'
-        time_now = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
         headers = {
             'Referer': referer
         }
