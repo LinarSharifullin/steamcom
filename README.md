@@ -23,9 +23,8 @@ Also you can see see some basic examples in folder [examples](https://github.com
 * [DoctorMcKay](https://github.com/DoctorMcKay) for his libraries, which I also turned to during development
 
 # Installation
-To do this, you need [git](https://git-scm.com/) installed
 ```console
-pip install git+https://github.com/LinarSharifullin/steamcom
+pip install steamcom
 ```
 
 # SteamClient Methods
