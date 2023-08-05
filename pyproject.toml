@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "steamcom"
 description = "Python implementation of the Steam Community API"
-version = "1.2.0"
+version = "1.2.1"
 authors = [
   { name="Linar Sharifullin"},
 ]
