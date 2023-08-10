@@ -5,7 +5,8 @@ build-backend = "hatchling.build"
 [project]
 name = "steamcom"
 description = "Python implementation of the Steam Community API"
-version = "1.2.2"
+# The version uploaded to pypi has been changed by action "pypi_publish.yml"
+version = "0.0.0"
 authors = [
   { name="Linar Sharifullin"},
 ]
