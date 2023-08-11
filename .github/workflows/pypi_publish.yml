@@ -20,7 +20,7 @@ jobs:
         pip install build
     - name: Extract tag name
       id: tag
-      run: echo ::set-output name=TAG_NAME::$(echo $GITHUB_REF | cut -d / -f 3)
+      run: echo TAG_NAME=$(echo $GITHUB_REF | cut -d / -f 3) >> $GITHUB_OUTPUT
     - name: Update version in pyproject.toml
       run: >-
         sed -i "s/0.0.0/${{ steps.tag.outputs.TAG_NAME }}/" pyproject.toml
