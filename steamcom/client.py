@@ -179,10 +179,10 @@ class SteamClient:
 
     @login_required
     def get_wallet_balance(self) -> float:
-        url = SteamUrl.STORE + '/account/'
-        response = self.session.get(url)
-        response_soup = BeautifulSoup(response.text, 'html.parser')
-        balance = response_soup.find(href=SteamUrl.STORE + '/account/history/')
+        main_page_response = self.session.get(SteamUrl.COMMUNITY)
+        response_soup = BeautifulSoup(main_page_response.text, 'html.parser')
+        balance_url = href=SteamUrl.STORE + '/account/store_transactions/'
+        balance = response_soup.find(balance_url)
         return parse_price(balance.text)
 
     @login_required
