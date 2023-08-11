@@ -182,7 +182,7 @@ class SteamClient:
         main_page_response = self.session.get(SteamUrl.COMMUNITY)
         response_soup = BeautifulSoup(main_page_response.text, 'html.parser')
         balance_url = href=SteamUrl.STORE + '/account/store_transactions/'
-        balance = response_soup.find(balance_url)
+        balance = response_soup.find(href=balance_url)
         return parse_price(balance.text)
 
     @login_required
