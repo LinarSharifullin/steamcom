@@ -1,5 +1,4 @@
 # Table of Content
-
 * [Credits](https://github.com/LinarSharifullin/steamcom#credits)
 
 * [Installation](https://github.com/LinarSharifullin/steamcom#installation)
@@ -23,6 +22,7 @@ Also you can see see some basic examples in folder [examples](https://github.com
 * [DoctorMcKay](https://github.com/DoctorMcKay) for his libraries, which I also turned to during development
 
 # Installation
+<sup><b>This program not associated with Valve Corp</b></sup>
 ```console
 pip install steamcom
 ```
