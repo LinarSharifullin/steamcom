@@ -56,7 +56,7 @@ class SteamClient:
         self._change_login_executed_fields(True)
 
     @login_required
-    def extract_session(self) -> dict[str, str]:
+    def extract_session(self) -> dict:
         cookies = self.session.cookies.get_dict()
         extracted_session = {
             'steamid': self.steam_id,
