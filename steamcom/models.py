@@ -6,6 +6,17 @@ class SteamUrl:
     API = 'https://api.steampowered.com'
     COMMUNITY = 'https://steamcommunity.com'
     STORE = 'https://store.steampowered.com'
+    LOGIN = 'https://login.steampowered.com'
+
+
+class IAuthenticationServiceEndpoint:
+    SERVICE = SteamUrl.API + '/IAuthenticationService'
+    GetPasswordRSAPublicKey = SERVICE + '/GetPasswordRSAPublicKey/v1'
+    BeginAuthSessionViaCredentials = SERVICE +\
+        '/BeginAuthSessionViaCredentials/v1'
+    UpdateAuthSessionWithSteamGuardCode = SERVICE +\
+        '/UpdateAuthSessionWithSteamGuardCode/v1'
+    PollAuthSessionStatus = SERVICE + '/PollAuthSessionStatus/v1'
 
 
 class ConfirmationTag:
