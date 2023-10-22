@@ -1,6 +1,5 @@
 import base64
 import rsa
-import json
 
 import requests
 
@@ -54,11 +53,11 @@ class LoginExecutor:
             'account_name': self.username,
             'encryption_timestamp': rsa_timestamp
         }
-        request_auth_response = self.session.post(url, data=request_auth_data)
-        request_auth_response_json = json.loads(request_auth_response.text)
-        client_id = request_auth_response_json['response']['client_id']
-        self.steam_id = request_auth_response_json['response']['steamid']
-        request_id = request_auth_response_json['response']['request_id']
+        request_auth_response = api_request(self.session, url,
+                                            data=request_auth_data)
+        client_id = request_auth_response['response']['client_id']
+        self.steam_id = request_auth_response['response']['steamid']
+        request_id = request_auth_response['response']['request_id']
         return client_id, request_id
 
     def _send_steam_guard_code(self, client_id: str) -> None:
@@ -70,7 +69,7 @@ class LoginExecutor:
             'code_type': 3,
             'code': generate_one_time_code(self.shared_secret)
         }
-        self.session.post(url, data=update_data)
+        api_request(self.session, url, data=update_data)
 
     def _request_refresh_token(self, client_id: str, request_id: str) -> str:
         url = IAuthenticationServiceEndpoint.PollAuthSessionStatus
@@ -78,9 +77,8 @@ class LoginExecutor:
             'client_id': client_id,
             'request_id': request_id,
         }
-        poll_response = self.session.post(url, data=pool_data)
-        poll_response_json = json.loads(poll_response.text)
-        refresh_token = poll_response_json['response']['refresh_token']
+        poll_response = api_request(self.session, url, data=pool_data)
+        refresh_token = poll_response['response']['refresh_token']
         return refresh_token
 
     def _finalize_login(self, refresh_token: str) -> dict:
@@ -91,12 +89,13 @@ class LoginExecutor:
             'sessionid': self.session.cookies['sessionid'],
             'redir': redir_url
         }
-        finalize_response = self.session.post(finalize_url, data=finalize_data)
-        finalize_response_json = json.loads(finalize_response.text)
-        return finalize_response_json
+        finalize_response = api_request(self.session, finalize_url,
+                                        data=finalize_data)
+        return finalize_response
 
     def _send_transfer_info(self, finalize_response: dict) -> None:
         parameters = finalize_response['transfer_info']
         for pass_data in parameters:
             pass_data['params']['steamID'] = finalize_response['steamID']
-            self.session.post(pass_data['url'], pass_data['params'])
+            api_request(self.session, pass_data['url'],
+                        data=pass_data['params'])
