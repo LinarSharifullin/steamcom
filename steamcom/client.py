@@ -73,6 +73,7 @@ class SteamClient:
         status = self.is_session_alive()
         if status is False:
             self._change_login_executed_fields(False)
+            self.session.cookies.clear()
             raise SessionIsInvalid()
 
     @login_required
