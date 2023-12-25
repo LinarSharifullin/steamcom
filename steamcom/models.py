@@ -31,6 +31,7 @@ class ConfirmationType(enum.IntEnum):
     CREATE_LISTING = 3
     CHANGE_PHONE_NUMBER = 5
     CONFIRM = 6  # I saw in the mail change
+    REGISTER_API_KEY = 9
 
 
 class Confirmation(NamedTuple):
@@ -49,14 +50,14 @@ class Confirmation(NamedTuple):
     warn: None
 
     def __str__(self) -> str:
-        if not self.summary:
+        if not self.summary or not self.summary[0]:
             if not self.headline:
                 return f'Unknown {self.type.name}'
             return self.headline
         return f'Confirmation: {self.summary[0]}'
 
     def __repr__(self) -> str:
-        if not self.summary:
+        if not self.summary or not self.summary[0]:
             if not self.headline:
                 return f'Unknown {self.type.name}'
             return self.headline
