@@ -126,10 +126,10 @@ def get_sell_listings_from_node(node: Tag) -> dict:
             or (created_datetime.month == datetime_now.month
                 and created_datetime.day > datetime_now.day):
             created_datetime = created_datetime.replace(
-                year=datetime.now().year-1)
+                year=datetime_now.year-1)
         else:
             created_datetime = created_datetime.replace(
-                year=datetime.now().year)
+                year=datetime_now.year)
         timestamp = created_datetime.timestamp()
         listing = {
             'listing_id': listing_raw.attrs['id'].replace('mylisting_', ''),
