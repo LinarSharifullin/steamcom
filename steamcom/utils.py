@@ -119,17 +119,14 @@ def get_sell_listings_from_node(node: Tag) -> dict:
             continue
         created_date = listing_raw.findAll(
                 'div', {'class': 'market_listing_listed_date'})[0]
-        created_on = created_date.text.strip()
-        created_datetime = datetime.strptime(created_on, '%d %b')
         datetime_now = datetime.now()
+        created_on = created_date.text.strip() + f' {datetime_now.year}'
+        created_datetime = datetime.strptime(created_on, '%d %b %Y')
         if created_datetime.month > datetime_now.month\
             or (created_datetime.month == datetime_now.month
                 and created_datetime.day > datetime_now.day):
             created_datetime = created_datetime.replace(
                 year=datetime_now.year-1)
-        else:
-            created_datetime = created_datetime.replace(
-                year=datetime_now.year)
         timestamp = created_datetime.timestamp()
         listing = {
             'listing_id': listing_raw.attrs['id'].replace('mylisting_', ''),
