@@ -67,7 +67,7 @@ class SteamMarket:
             raise ApiException(text.format(response.status_code))
         print('Received market page')
         assets_descriptions = json.loads(
-            text_between(response.text, 'var g_rgAssets = ', ';\r\n'))
+            text_between(response.text, 'var g_rgAssets = ', ';\n'))
         listing_id_to_assets_address = \
             get_listing_id_to_assets_address_from_html(response.text)
         listings = get_market_listings_from_html(response.text)
