@@ -19,7 +19,7 @@ class LoginExecutor:
         self.session = session
 
     def login(self) -> str:
-        self.session.post(SteamUrl.COMMUNITY)  # to get a cookies
+        self.session.get(SteamUrl.COMMUNITY)  # to get a cookies
         rsa_key, rsa_timestamp = self._fetch_rsa_params()
         encrypted_password = self._encrypt_password(rsa_key)
         client_id, request_id = self._request_auth(encrypted_password,
@@ -89,8 +89,12 @@ class LoginExecutor:
             'sessionid': self.session.cookies['sessionid'],
             'redir': redir_url
         }
+        headers = {
+            'Referer': redir_url,
+            'Origin': 'https://steamcommunity.com'
+        }
         finalize_response = api_request(self.session, finalize_url,
-                                        data=finalize_data)
+                                        headers=headers, data=finalize_data)
         return finalize_response
 
     def _send_transfer_info(self, finalize_response: dict) -> None:
