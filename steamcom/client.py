@@ -133,6 +133,7 @@ class SteamClient:
                     inventory = self.get_inventory_page(
                         partner_steam_id, app_id, context_id,
                         start_asset_id=start_asset_id)
+                    print('Get inventory page')
                 except ApiException:
                     attempts -= 1
                     continue
@@ -141,6 +142,7 @@ class SteamClient:
                 inventory = self.get_inventory_page(
                     partner_steam_id, app_id, context_id,
                     start_asset_id=start_asset_id)
+                print('Get inventory page')
             if not full_inventory:
                 full_inventory['assets'] = inventory['assets']
                 full_inventory['total_inventory_count']\
