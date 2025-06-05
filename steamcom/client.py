@@ -29,6 +29,7 @@ class SteamClient:
         self.identity_secret = identity_secret
         self.session = session
         self.steam_id = ''  # will be added after login
+        self.refresh_token = ''
         self.currency_id = None  # will be added after login
         self.was_login_executed = False
         self.confirmations = None
@@ -51,7 +52,7 @@ class SteamClient:
             raise LoginFailed('You alrady have a session')
         login_executor = LoginExecutor(
             self.username, self.password, self.shared_secret, self.session)
-        self.steam_id = login_executor.login()
+        self.steam_id, self.refresh_token = login_executor.login()
         self.currency_id = self.get_my_currency_id()
         self._change_login_executed_fields(True)
 

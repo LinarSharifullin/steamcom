@@ -16,24 +16,27 @@ class LoginExecutor:
         self.password = password
         self.shared_secret = shared_secret
         self.steam_id = ''  # will be added after login requests
+        self.refresh_token =  '' # Will be added during login
         self.session = session
 
-    def login(self) -> str:
+    def login(self) -> tuple[str, str]:
         self.session.get(SteamUrl.COMMUNITY)  # to get a cookies
         rsa_key, rsa_timestamp = self._fetch_rsa_params()
         encrypted_password = self._encrypt_password(rsa_key)
         client_id, request_id = self._request_auth(encrypted_password,
                                                    rsa_timestamp)
         self._send_steam_guard_code(client_id)
-        refresh_token = self._request_refresh_token(client_id, request_id)
-        finalize_response = self._finalize_login(refresh_token)
+        self._request_refresh_token(client_id, request_id)
+        finalize_response = self._finalize_login()
         self._send_transfer_info(finalize_response)
-        return self.steam_id
+        self._set_sessionid_cookies()
+        return self.steam_id, self.refresh_token
 
     def _fetch_rsa_params(self) -> tuple[rsa.PublicKey, str]:
         url = IAuthenticationServiceEndpoint.GetPasswordRSAPublicKey
+        headers = {'Referer': f'{SteamUrl.COMMUNITY}/', 'Origin': SteamUrl.COMMUNITY}
         params = {'account_name': self.username}
-        key_response = api_request(self.session, url, params)
+        key_response = api_request(self.session, url, params, headers)
         rsa_mod = int(key_response['response']['publickey_mod'], 16)
         rsa_exp = int(key_response['response']['publickey_exp'], 16)
         rsa_timestamp = key_response['response']['timestamp']
@@ -53,7 +56,8 @@ class LoginExecutor:
             'account_name': self.username,
             'encryption_timestamp': rsa_timestamp
         }
-        request_auth_response = api_request(self.session, url,
+        headers = {'Referer': f'{SteamUrl.COMMUNITY}/', 'Origin': SteamUrl.COMMUNITY}
+        request_auth_response = api_request(self.session, url, headers = headers,
                                             data=request_auth_data)
         client_id = request_auth_response['response']['client_id']
         self.steam_id = request_auth_response['response']['steamid']
@@ -63,43 +67,70 @@ class LoginExecutor:
     def _send_steam_guard_code(self, client_id: str) -> None:
         url =\
             IAuthenticationServiceEndpoint.UpdateAuthSessionWithSteamGuardCode
+        headers = {'Referer': f'{SteamUrl.COMMUNITY}/', 'Origin': SteamUrl.COMMUNITY}
         update_data = {
             'client_id': client_id,
             'steamid': self.steam_id,
             'code_type': 3,
             'code': generate_one_time_code(self.shared_secret)
         }
-        api_request(self.session, url, data=update_data)
+        api_request(self.session, url, headers=headers, data=update_data)
 
-    def _request_refresh_token(self, client_id: str, request_id: str) -> str:
+    def _request_refresh_token(self, client_id: str, request_id: str) -> None:
         url = IAuthenticationServiceEndpoint.PollAuthSessionStatus
+        headers = {'Referer': f'{SteamUrl.COMMUNITY}/', 'Origin': SteamUrl.COMMUNITY}
         pool_data = {
             'client_id': client_id,
             'request_id': request_id,
         }
-        poll_response = api_request(self.session, url, data=pool_data)
-        refresh_token = poll_response['response']['refresh_token']
-        return refresh_token
+        poll_response = api_request(self.session, url, headers=headers, data=pool_data)
+        self.refresh_token = poll_response['response']['refresh_token']
 
-    def _finalize_login(self, refresh_token: str) -> dict:
+    def _finalize_login(self) -> dict:
         redir_url = SteamUrl.COMMUNITY + '/login/home/?goto='
         finalize_url = SteamUrl.LOGIN + '/jwt/finalizelogin'
         finalize_data = {
-            'nonce': refresh_token,
-            'sessionid': self.session.cookies['sessionid'],
-            'redir': redir_url
+            'nonce': (None, self.refresh_token),
+            'sessionid': (None, self.session.cookies['sessionid']),
+            'redir': (None, redir_url)
         }
         headers = {
             'Referer': redir_url,
-            'Origin': 'https://steamcommunity.com'
+            'Origin': SteamUrl.COMMUNITY
         }
-        finalize_response = api_request(self.session, finalize_url,
-                                        headers=headers, data=finalize_data)
+        finalize_response = self.session.post(
+            finalize_url, headers=headers,files=finalize_data).json()
         return finalize_response
 
     def _send_transfer_info(self, finalize_response: dict) -> None:
         parameters = finalize_response['transfer_info']
         for pass_data in parameters:
-            pass_data['params']['steamID'] = finalize_response['steamID']
-            api_request(self.session, pass_data['url'],
-                        data=pass_data['params'])
+            pass_data['params'].update({'steamID': finalize_response['steamID']})
+            multipart_fields = {
+                key: (None, str(value))
+                for key, value in pass_data['params'].items()
+            }
+            self.session.post(pass_data['url'], files=multipart_fields)
+
+    def _set_sessionid_cookies(self) -> None:
+        community_domain = SteamUrl.COMMUNITY[8:]
+        store_domain = SteamUrl.STORE[8:]
+        community_cookie_dic = self.session.cookies.get_dict(domain=community_domain)
+        store_cookie_dic = self.session.cookies.get_dict(domain=store_domain)
+        for name in ('steamLoginSecure', 'sessionid', 'steamRefresh_steam', 'steamCountry'):
+            cookie = self.session.cookies.get_dict()[name]
+            if name == "steamLoginSecure":
+                store_cookie = self._create_cookie(name, store_cookie_dic[name], store_domain)
+            else:
+                store_cookie = self._create_cookie(name, cookie, store_domain)
+
+            if name in ["sessionid", "steamLoginSecure"]:
+                community_cookie = self._create_cookie(name, community_cookie_dic[name], community_domain)
+            else:
+                community_cookie = self._create_cookie(name, cookie, community_domain)
+
+            self.session.cookies.set(**community_cookie)
+            self.session.cookies.set(**store_cookie)
+
+    def _create_cookie(self, name: str, cookie: str, domain: str) -> dict:
+        return {'name': name, 'value': cookie, 'domain': domain}
