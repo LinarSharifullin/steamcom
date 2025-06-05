@@ -3,6 +3,7 @@ import time
 import json
 from typing import Mapping
 import urllib.parse as urlparse
+from http.cookiejar import Cookie
 
 import requests
 from bs4 import BeautifulSoup
@@ -58,12 +59,16 @@ class SteamClient:
 
     @login_required
     def extract_session(self) -> dict:
-        cookies = self.session.cookies.get_dict()
         extracted_session = {
             'steamid': self.steam_id,
-            'currencyid': self.currency_id
+            'currencyid': self.currency_id,
+            'refresh_token': self.refresh_token,
+            'cookies': []
         }
-        extracted_session.update(cookies)
+        for cookie in self.session.cookies:
+            cookie_dict = vars(cookie).copy()
+            cookie_dict['rest'] = cookie_dict.pop('_rest', {})
+            extracted_session['cookies'].append(cookie_dict)
         return extracted_session
 
     def load_session(self, extracted_session: Mapping[str, str]) -> None:
@@ -84,18 +89,12 @@ class SteamClient:
         return steam_login.lower() in main_page_response.text.lower()
 
     def _load_session(self, extracted_session: Mapping[str, str]) -> None:
-        community_url = SteamUrl.COMMUNITY[8:]
-        store_url = SteamUrl.STORE[8:]
-        set_cookie = self.session.cookies.set
-        for key, value in extracted_session.items():
-            unformatted_key = key.lower().replace('_', '')
-            if unformatted_key == 'steamid':
-                self.steam_id = value
-            elif unformatted_key == 'currencyid':
-                self.currency_id = value
-            else:
-                set_cookie(key, value, domain=community_url)
-                set_cookie(key, value, domain=store_url)
+        self.steam_id = extracted_session['steamid']
+        self.currency_id = extracted_session['currencyid']
+        self.refresh_token = extracted_session['refresh_token']
+        for c_dict in extracted_session['cookies']:
+            cookie = Cookie(**c_dict)
+            self.session.cookies.set_cookie(cookie)
 
     def _change_login_executed_fields(self, status: bool) -> None:
         if status:
