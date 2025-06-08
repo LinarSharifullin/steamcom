@@ -112,7 +112,7 @@ class SteamMarket:
     def create_buy_order(self, app_id: str, market_hash_name: str,
                          price_single_item: str, quantity: int) -> dict:
         data = {
-            'sessionid': self.session.cookies.get_dict()['sessionid'],
+            'sessionid': self.session.cookies.get_dict(domain='steamcommunity.com').get('sessionid'),
             'currency': self.currency_id,
             'appid': app_id,
             'market_hash_name': market_hash_name,
@@ -134,7 +134,7 @@ class SteamMarket:
                           money_to_receive: str, amount: int = 1) -> dict:
         data = {
             'assetid': asset_id,
-            'sessionid': self.session.cookies.get_dict()['sessionid'],
+            'sessionid': self.session.cookies.get_dict(domain='steamcommunity.com').get('sessionid'),
             'contextid': context_id,
             'appid': app_id,
             'amount': amount,
@@ -151,7 +151,7 @@ class SteamMarket:
     @login_required
     def cancel_sell_order(self, sell_listing_id: str) -> None:
         url = f'{SteamUrl.COMMUNITY}/market/removelisting/{sell_listing_id}'
-        data = {'sessionid': self.session.cookies.get_dict()['sessionid']}
+        data = {'sessionid': self.session.cookies.get_dict(domain='steamcommunity.com').get('sessionid')}
         headers = {'Referer': SteamUrl.COMMUNITY + '/market/'}
         response = self.session.post(url, data=data, headers=headers)
         if not response.ok:
@@ -161,7 +161,7 @@ class SteamMarket:
     @login_required
     def cancel_buy_order(self, buy_order_id: str) -> dict:
         data = {
-            'sessionid': self.session.cookies.get_dict()['sessionid'],
+            'sessionid': self.session.cookies.get_dict(domain='steamcommunity.com').get('sessionid'),
             'buy_orderid': buy_order_id
         }
         headers = {'Referer': SteamUrl.COMMUNITY + '/market'}

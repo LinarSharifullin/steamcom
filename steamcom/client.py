@@ -195,7 +195,7 @@ class SteamClient:
         partner_account_id = get_key_value_from_url(trade_offer_url, 'partner')
         partner_steam_id = account_id_to_steam_id(partner_account_id)
         offer = create_offer_dict(my_assets, them_assets)
-        session_id = self.session.cookies.get_dict()['sessionid']
+        session_id = self.session.cookies.get_dict(domain='steamcommunity.com').get('sessionid')
         url = SteamUrl.COMMUNITY + '/tradeoffer/new/send'
         server_id = 1
         trade_offer_create_params = {'trade_offer_access_token': token}
