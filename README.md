@@ -44,11 +44,11 @@ print(steam_client.was_login_executed) # True
 print(steam_client) # SteamClient: GabeNewell
 ```
 
-## extract_session() -> dict[str, str]
+## extract_session() -> dict
 Needed to save the session, you can save it from json or txt and use it in the future
 ```python
 extracted_session = steam_client.extract_session()
-print(extracted_session) # {'steam_id': '76...82', 'sessionid': '4f...90', 'steamLogin': '76...85', 'steamLoginSecure': '76...52'}
+print(extracted_session) # {"steamid": "76...82", "currencyid": 1, "refresh_token": "uy...BD", "cookies": list[dict[str, int]]}
 ```
 
 ## load_session(extracted_session: Mapping[str, str]) -> None
@@ -57,6 +57,8 @@ from steamcom.client import SteamClient
 
 
 steam_client = SteamClient(username, passowrd, shared_secret, identity_secret)
+# extracted_session format
+# {"steamid": "76...82", "currencyid": 1, "refresh_token": "uy...BD", "cookies": list[dict[str, int]]}
 steam_client.load_session(extracted_session)
 ```
 
