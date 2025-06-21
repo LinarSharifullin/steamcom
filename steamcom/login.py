@@ -68,11 +68,15 @@ class LoginExecutor:
         url =\
             IAuthenticationServiceEndpoint.UpdateAuthSessionWithSteamGuardCode
         headers = {'Referer': f'{SteamUrl.COMMUNITY}/', 'Origin': SteamUrl.COMMUNITY}
+        if shared_secret:
+            code_2fa = generate_one_time_code(self.shared_secret)
+        else:
+            code_2fa = input('Input 2fa code')
         update_data = {
             'client_id': client_id,
             'steamid': self.steam_id,
             'code_type': 3,
-            'code': generate_one_time_code(self.shared_secret)
+            'code': code_2fa
         }
         api_request(self.session, url, headers=headers, data=update_data)
 

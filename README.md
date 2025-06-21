@@ -43,6 +43,7 @@ steam_client.login()
 print(steam_client.was_login_executed) # True
 print(steam_client) # SteamClient: GabeNewell
 ```
+Can send blank '' in shared_secret you will be asked to enter the 2fa code manually
 
 ## extract_session() -> dict
 Needed to save the session, you can save it from json or txt and use it in the future
