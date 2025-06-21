@@ -71,7 +71,7 @@ class LoginExecutor:
         if self.shared_secret:
             code_2fa = generate_one_time_code(self.shared_secret)
         else:
-            code_2fa = input('Input 2fa code')
+            code_2fa = input('Input 2fa code: ')
         update_data = {
             'client_id': client_id,
             'steamid': self.steam_id,
