@@ -261,7 +261,8 @@ def api_request(session: Session, url: str, params: dict = None,
     else:
         response = session.get(url, params=params, headers=default_headers)
     if response.status_code != HTTPStatus.OK:
-        raise ApiException(f'HTTP status code: {response.status_code}')
+        if response.status_code != HTTPStatus.NOT_ACCEPTABLE and 'createbuyorder' not in url:
+            raise ApiException(f'HTTP status code: {response.status_code}')
     if 'application/json' not in response.headers.get('Content-Type', ''):
         raise ApiException('Not returned body')
     response_json = response.json()

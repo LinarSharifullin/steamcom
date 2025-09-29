@@ -32,7 +32,7 @@ class ConfirmationType(enum.IntEnum):
     CHANGE_PHONE_NUMBER = 5
     CONFIRM = 6  # I saw in the mail change
     REGISTER_API_KEY = 9
-    BUY_LISTING = 12
+    PURCHASE = 12
 
 
 class Confirmation(NamedTuple):

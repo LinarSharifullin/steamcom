@@ -315,7 +315,7 @@ Return listings
 }
 ```
 
-## create_buy_order(app_id: str, market_hash_name: str, price_single_item: str, quantity: int) -> dict:
+## create_buy_order(app_id: str, market_hash_name: str, price_single_item: str, quantity: int, confirm: bool = True) -> dict:
 Reponse
 ```python
 {'success': 1, 'buy_orderid': '5465633972'}

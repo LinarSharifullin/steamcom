@@ -15,16 +15,19 @@ from steamcom.utils import (login_required, text_between,
                             api_request)
 from steamcom.models import SteamUrl, Result
 from steamcom.exceptions import ApiException
+from steamcom.confirmations import ConfirmationExecutor
 
 
 class SteamMarket:
 
     def __init__(self, steam_id: str = '', currency_id: int = None,
+                 confirmations: ConfirmationExecutor = None,
                  session: requests.Session = requests.Session()) -> None:
         self.steam_id = steam_id
         self.currency_id = currency_id
         self.session = session
         self.was_login_executed = False
+        self.confirmations = confirmations
 
     @login_required
     def get_price_history(self, app_id: str, market_hash_name: str) -> dict:
@@ -110,14 +113,21 @@ class SteamMarket:
 
     @login_required
     def create_buy_order(self, app_id: str, market_hash_name: str,
-                         price_single_item: str, quantity: int) -> dict:
+                         price_single_item: str, quantity: int,
+                         confirm: bool = True) -> dict:
+        if confirm and not self.confirmations.identity_secret:
+            raise ValueError('Cannot be confirmed without identity_secret')
         data = {
             'sessionid': self.session.cookies.get_dict(domain='steamcommunity.com').get('sessionid'),
             'currency': self.currency_id,
             'appid': app_id,
             'market_hash_name': market_hash_name,
             'price_total': str(Decimal(price_single_item) * Decimal(quantity)),
-            'quantity': quantity
+            'tradefee_tax': 0,
+            'quantity': quantity,
+            'billing_state': '',
+            'save_my_address': 0,
+            'confirmation': 0
         }
         url_name = urllib.parse.quote(market_hash_name)
         referer = f'{SteamUrl.COMMUNITY}/market/listings/{app_id}/{url_name}'
@@ -126,6 +136,25 @@ class SteamMarket:
         response = api_request(self.session, url, headers=headers, data=data)
         if response['success'] == Result.OK.value:
             return response
+        elif response['success'] == Result.PENDING.value:
+            if confirm:
+                confirmation_id = response['confirmation']['confirmation_id']
+                confirmations = self.confirmations.get_confirmations()
+                for confirmation in confirmations:
+                    if confirmation.creator_id != confirmation_id:
+                        continue
+                    conf_status = self.confirmations.respond_to_confirmation(confirmation)
+                    if not conf_status:
+                        raise ApiException('Confirmation failed')
+                print('Order confirmed')
+                data['confirmation'] = confirmation_id
+                response_after_conf = api_request(self.session, url, headers=headers, data=data)
+                if response_after_conf['success'] == Result.OK.value:
+                    return response_after_conf
+                else:
+                    raise ApiException(response)
+            else:
+                return response
         else:
             raise ApiException(response)
 

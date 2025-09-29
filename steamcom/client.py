@@ -102,7 +102,7 @@ class SteamClient:
                 self.identity_secret, self.steam_id, self.session)
             self.confirmations.was_login_executed = True
             self.market = SteamMarket(self.steam_id, self.currency_id,
-                                      self.session)
+                                      self.confirmations, self.session)
             self.market.was_login_executed = True
         else:
             self.confirmations = None
