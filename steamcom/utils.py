@@ -61,11 +61,11 @@ def get_description_key(item: dict) -> str:
     return item['classid'] + '_' + item['instanceid']
 
 
-def parse_price(price: str) -> float:
-    pattern = '\\D?(\\d*)(\\.|,)?(\\d*)'
-    tokens = re.search(pattern, price, re.UNICODE)
-    decimal_str = tokens.group(1) + '.' + tokens.group(3)
-    return float(decimal_str)
+def parse_price(price_string: str) -> float:
+    price_string_without_space = price_string.replace(' ', '')
+    price_without_letters = re.sub(r"[^0-9,]", "", price_string_without_space)
+    price_with_dot_instead_comma = price_without_letters.replace(',', '.')
+    return float(price_with_dot_instead_comma)
 
 
 def text_between(text: str, begin: str, end: str) -> str:
