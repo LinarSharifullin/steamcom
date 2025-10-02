@@ -102,7 +102,11 @@ Return parsed inventory:
 ## get_my_inventory(app_id: str, context_id: str, delay: int = 3) -> dict:
 The response is the same as get_partner_inventory
 
-## get_wallet_balance() -> float
+## get_wallet_balance(self, full_data: bool = False) -> Union[float, dict]:
+full_data:
+```python
+{'wallet_currency': 5, 'wallet_country': 'RU', 'wallet_state': '', 'wallet_fee': '1', 'wallet_fee_minimum': '1', 'wallet_fee_percent': '0.05', 'wallet_publisher_fee_percent_default': '0.10', 'wallet_fee_base': '0', 'wallet_balance': '217328', 'wallet_delayed_balance': '10231', 'wallet_max_balance': '17500000', 'wallet_trade_max_balance': '15750000', 'success': 1, 'rwgrsn': -2}
+```
 
 ## send_offer_with_url(my_assets: dict, them_assets: dict, trade_offer_url: str, message: str = '') -> dict
 my_assets and them_assets need send in format returned in functions what get inventories:

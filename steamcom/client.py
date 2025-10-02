@@ -1,12 +1,11 @@
 import re
 import time
 import json
-from typing import Mapping
+from typing import Mapping, Union
 import urllib.parse as urlparse
 from http.cookiejar import Cookie
 
 import requests
-from bs4 import BeautifulSoup
 
 from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
@@ -181,12 +180,14 @@ class SteamClient:
         return inventory
 
     @login_required
-    def get_wallet_balance(self) -> float:
-        main_page_response = self.session.get(SteamUrl.COMMUNITY)
-        response_soup = BeautifulSoup(main_page_response.text, 'html.parser')
-        balance_url = href=SteamUrl.STORE + '/account/store_transactions/'
-        balance = response_soup.find(href=balance_url)
-        return parse_price(balance.text)
+    def get_wallet_balance(self, full_data: bool = False) -> Union[float, dict]:
+        market_page_response = self.session.get(SteamUrl.COMMUNITY + '/market')
+        pattern = r'var g_rgWalletInfo = (\{.*?\});'
+        match = re.search(pattern, market_page_response.text)
+        balance_data = json.loads(match.group(1))
+        if full_data:
+            return balance_data
+        return round(int(balance_data['wallet_balance']) / 100, 2)
 
     @login_required
     def send_offer_with_url(self, my_assets: dict, them_assets: dict,
