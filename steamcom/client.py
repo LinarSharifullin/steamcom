@@ -155,7 +155,7 @@ class SteamClient:
                 return full_inventory
 
     def get_inventory_page(self, partner_steam_id: str, app_id: str,
-                           context_id: str, count: int = 2000,
+                           context_id: str, count: int = 2500,
                            start_asset_id: str = None) -> dict:
         url = '/'.join([SteamUrl.COMMUNITY, 'inventory', partner_steam_id,
                         app_id, context_id])
