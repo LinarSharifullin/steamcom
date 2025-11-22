@@ -14,7 +14,7 @@ from steamcom.utils import (login_required, text_between,
                             parse_graph, parse_orders_histogram,
                             api_request)
 from steamcom.models import SteamUrl, Result
-from steamcom.exceptions import ApiException
+from steamcom.exceptions import ApiException, SessionIsInvalid
 from steamcom.confirmations import ConfirmationExecutor
 
 
@@ -204,9 +204,11 @@ class SteamMarket:
         url = SteamUrl.COMMUNITY + '/market/listings/{}/{}'
         url_name = urllib.parse.quote(market_hash_name)
         response = self.session.get(url.format(app_id, url_name)).text
-        if 'market_listing_largeimage' not in response:
+        if 'Market_LoadOrderSpread' not in response:
             raise ApiException('No one is selling this item')
-        if 'mbuyorder' in response:
+        elif 'user_info' not in response:
+            raise SessionIsInvalid()
+        elif 'mybuyorder' in response:
             buy_orders = get_market_listings_from_html(response)['buy_orders']
             first_buy_order = list(buy_orders.keys())[0]
             return buy_orders[first_buy_order]
