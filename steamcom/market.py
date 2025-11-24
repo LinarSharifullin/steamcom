@@ -204,10 +204,10 @@ class SteamMarket:
         url = SteamUrl.COMMUNITY + '/market/listings/{}/{}'
         url_name = urllib.parse.quote(market_hash_name)
         response = self.session.get(url.format(app_id, url_name)).text
-        if 'Market_LoadOrderSpread' not in response:
-            raise ApiException('No one is selling this item')
-        elif 'user_info' not in response:
+        if 'user_info' not in response:
             raise SessionIsInvalid()
+        elif 'Market_LoadOrderSpread' not in response:
+            raise ApiException('No one is selling this item')
         elif 'mybuyorder' in response:
             buy_orders = get_market_listings_from_html(response)['buy_orders']
             first_buy_order = list(buy_orders.keys())[0]
