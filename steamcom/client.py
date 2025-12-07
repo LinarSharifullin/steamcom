@@ -13,7 +13,7 @@ from steamcom.utils import (login_required, parse_price, api_request,
                             merge_items_with_descriptions_from_inventory,
                             get_key_value_from_url, account_id_to_steam_id,
                             create_offer_dict)
-from steamcom.models import SteamUrl
+from steamcom.models import SteamUrl, WalletInfo
 from steamcom.exceptions import LoginFailed, SessionIsInvalid, ApiException
 from steamcom.market import SteamMarket
 
@@ -53,7 +53,8 @@ class SteamClient:
         login_executor = LoginExecutor(
             self.username, self.password, self.shared_secret, self.session)
         self.steam_id, self.refresh_token = login_executor.login()
-        self.currency_id = self.get_my_currency_id()
+        self.wallet_info = self.get_wallet_info()
+        self.currency_id = self.wallet_info.currency
         self._change_login_executed_fields(True)
 
     @login_required
@@ -76,6 +77,7 @@ class SteamClient:
         self._load_session(extracted_session)
         self._change_login_executed_fields(True)
         status = self.is_session_alive()
+        self.wallet_info = self.get_wallet_info()
         if status is False:
             self._change_login_executed_fields(False)
             self.session.cookies.clear()
@@ -109,9 +111,38 @@ class SteamClient:
         self.was_login_executed = status
 
     def get_my_currency_id(self) -> int:
+        # Old method, now using get_wallet_info
         response = self.session.get(SteamUrl.COMMUNITY + '/market/')
         part_with_currency = re.search('wallet_currency":\\d+', response.text)
         return int(re.search('\\d+', part_with_currency[0])[0])
+
+    def get_wallet_info(self) -> WalletInfo:
+        market_page_response = self.session.get(SteamUrl.COMMUNITY + '/market')
+        pattern = r'var g_rgWalletInfo = (\{.*?\});'
+        match = re.search(pattern, market_page_response.text)
+        if not match:
+            raise ValueError('g_rgWalletInfo not found')
+        raw_wallet_info = json.loads(match.group(1))
+        return WalletInfo(
+            currency=raw_wallet_info['wallet_currency'],
+            country=raw_wallet_info['wallet_country'],
+            state=raw_wallet_info['wallet_state'],
+            fee=raw_wallet_info['wallet_fee'],
+            fee_minimum=int(raw_wallet_info['wallet_fee_minimum']),
+            fee_percent=float(raw_wallet_info['wallet_fee_percent']),
+            publisher_fee_percent_default=float(
+                raw_wallet_info['wallet_publisher_fee_percent_default']),
+            market_minimum=int(raw_wallet_info['wallet_market_minimum']),
+            currency_increment=int(raw_wallet_info['wallet_currency_increment']),
+            fee_base=int(raw_wallet_info['wallet_fee_base']),
+            balance=round(int(raw_wallet_info['wallet_balance']) / 100, 2),
+            delayed_balance=round(
+                int(raw_wallet_info['wallet_delayed_balance']) / 100, 2),
+            max_balance=round(
+                int(raw_wallet_info['wallet_max_balance']) / 100, 2),
+            trade_max_balance=round(
+                int(raw_wallet_info['wallet_trade_max_balance']) / 100, 2)
+        )
 
     @login_required
     def get_my_inventory(self, app_id: str, context_id: str,

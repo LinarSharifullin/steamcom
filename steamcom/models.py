@@ -65,6 +65,26 @@ class Confirmation(NamedTuple):
         return f'Confirmation: {self.summary[0]}'
 
 
+class WalletInfo(NamedTuple):
+    currency: int
+    country: str
+    state: str
+    fee: str
+    fee_minimum: int
+    fee_percent: float
+    publisher_fee_percent_default: float
+    market_minimum: int
+    currency_increment: int
+    fee_base: int
+    balance: float
+    delayed_balance: float
+    max_balance: float
+    trade_max_balance: float
+
+    def __str__(self) -> str:
+        return f'balance: {self.balance}'
+
+
 class HistoryStatus(enum.IntEnum):
     LISTED = 1
     CANCELED = 2

@@ -99,6 +99,11 @@ Return parsed inventory:
  'total_inventory_count': 1}
 ```
 
+## get_wallet_info(self) -> WalletInfo:
+```python
+WalletInfo(currency=5, country='RU', state='', fee='1', fee_minimum=77, fee_percent=0.05, publisher_fee_percent_default=0.1, market_minimum=77, currency_increment=1, fee_base=0, balance=2297.29, delayed_balance=0.0, max_balance=175000.0, trade_max_balance=157500.0)
+```
+
 ## get_my_inventory(app_id: str, context_id: str, delay: int = 3) -> dict:
 The response is the same as get_partner_inventory
 
