@@ -3,11 +3,12 @@ import math
 
 
 class FeeCounter:
-    def __init__(self, wallet_fee_base: int = 0, wallet_fee_percent: float = 0.05,
-                 wallet_fee_minimum: int = 1):
-        self.wallet_fee_base = wallet_fee_base
-        self.wallet_fee_percent = wallet_fee_percent
-        self.wallet_fee_minimum = wallet_fee_minimum
+    def __init__(self, fee_base: int = 0, fee_percent: float = 0.05,
+                 fee_minimum: int = 1):
+        self.fee_base = fee_base
+        self.fee_percent = fee_percent
+        self.fee_minimum = fee_minimum
+
 
     def get_int_price(self, strAmount):
         if not strAmount:
@@ -23,8 +24,8 @@ class FeeCounter:
     def calculate_fee_amount(self, amount, publisherFee):
         publisherFee = 0.1
         iterations = 0
-        received = int((amount - self.wallet_fee_base) / (
-            self.wallet_fee_percent + float(publisherFee) + 1))
+        received = int((amount - self.fee_base) / (
+            self.fee_percent + float(publisherFee) + 1))
         bEverUndershot = False
         fees = self.sended(received, publisherFee)
 
@@ -48,8 +49,8 @@ class FeeCounter:
 
 
     def sended(self, receivedAmount, publisherFee):
-        nSteamFee = int(math.floor(max(receivedAmount * self.wallet_fee_percent,
-                        self.wallet_fee_minimum) + self.wallet_fee_base))
+        nSteamFee = int(math.floor(max(receivedAmount * self.fee_percent,
+                        self.fee_minimum) + self.fee_base))
         nPublisherFee = int(math.floor(max(
             receivedAmount * publisherFee, 1) if publisherFee > 0 else 0))
         nAmountToSend = receivedAmount + nSteamFee + nPublisherFee
