@@ -1,8 +1,11 @@
-import math
+import math, warnings
 
 
-
-class FeeCounter:
+class OldFeeCounter:
+    """
+    This is an old algorithm that calculates fees incorrectly
+    Use FeeCounter instead. This class will be removed in the next version
+    """
     def __init__(self, fee_base: int = 0, fee_percent: float = 0.05,
                  fee_minimum: int = 1):
         self.fee_base = fee_base
@@ -64,8 +67,21 @@ class FeeCounter:
         }
 
 
-    def count(self, price: float) -> dict:
-        priceInt = self.get_int_price(price)
-        fees = self.calculate_fee_amount(priceInt, 0.1)
-        return fees
-
+def count(price: float) -> dict:
+    """"
+    This is an old algorithm that calculates fees incorrectly
+    Use FeeCounter instead. This function will be removed in the next version
+    """
+    warnings.warn(
+        (
+            "This is an old algorithm that calculates fees incorrectly. "
+            "Use FeeCounter instead. "
+            "This function will be removed in the next version"
+        ),
+        DeprecationWarning,
+        stacklevel=2
+    )
+    old_fee_counter = OldFeeCounter()
+    priceInt = old_fee_counter.get_int_price(price)
+    fees = old_fee_counter.calculate_fee_amount(priceInt, 0.1)
+    return fees
