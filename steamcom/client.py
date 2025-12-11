@@ -16,6 +16,7 @@ from steamcom.utils import (login_required, parse_price, api_request,
 from steamcom.models import SteamUrl, WalletInfo
 from steamcom.exceptions import LoginFailed, SessionIsInvalid, ApiException
 from steamcom.market import SteamMarket
+from steamcom.fee_counter import FeeCounter
 
 
 class SteamClient:
@@ -34,6 +35,7 @@ class SteamClient:
         self.was_login_executed = False
         self.confirmations = None
         self.market = None
+        self.fee_counter = None
 
     def __str__(self) -> str:
         if self.was_login_executed:
@@ -75,13 +77,13 @@ class SteamClient:
         if self.was_login_executed:
             raise LoginFailed('You alrady have a session')
         self._load_session(extracted_session)
-        self._change_login_executed_fields(True)
-        status = self.is_session_alive()
-        self.wallet_info = self.get_wallet_info()
-        if status is False:
-            self._change_login_executed_fields(False)
+        self.was_login_executed = True
+        if not self.is_session_alive():
             self.session.cookies.clear()
+            self.was_login_executed = False
             raise SessionIsInvalid()
+        self.wallet_info = self.get_wallet_info()
+        self._change_login_executed_fields(True)
 
     @login_required
     def is_session_alive(self) -> bool:
@@ -105,9 +107,14 @@ class SteamClient:
             self.market = SteamMarket(self.steam_id, self.currency_id,
                                       self.confirmations, self.session)
             self.market.was_login_executed = True
+            self.fee_counter = FeeCounter(
+                self.wallet_info.fee_percent, self.wallet_info.market_minimum,
+                self.wallet_info.currency_increment,
+                self.wallet_info.publisher_fee_percent_default)
         else:
             self.confirmations = None
             self.market = None
+            self.fee_counter = None
         self.was_login_executed = status
 
     def get_my_currency_id(self) -> int:
