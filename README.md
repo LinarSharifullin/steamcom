@@ -416,8 +416,9 @@ Response
 The response is the same as get_my_history
 
 # fee_counter module functions
-## count(price: float) -> dict
+## calculate_seller_price(self, buyer_price: float) -> int
 Reponse
 ```python
-{'steam_fee': 30, 'publisher_fee': 58, 'fees': 87, 'buyer_pay': 676, 'amount': 677, 'seller_receive': 589}
+>>> steam_client.fee_counter.calculate_seller_price(100)
+8697
 ```
