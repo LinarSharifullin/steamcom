@@ -1,6 +1,73 @@
 import math, warnings
 
 
+class FeeCounter:
+    def __init__(self, fee_percent: float = 0.05,  market_minimum: int = 1,
+                 currency_increment: int = 1,
+                 publisher_fee_percent_default: float = 0.1):
+        self.fee_percent = fee_percent
+        self.market_minimum = market_minimum
+        self.currency_increment = currency_increment
+        self.publisher_fee_percent_default = publisher_fee_percent_default
+
+    def get_int_price(self, float_price):
+        if not float_price:
+            return 0
+        elif float_price < 0.03:
+            float_price = 0.03
+        float_amount = float_price * 100
+        int_amount = math.floor(0 if not type(float_amount) else float_amount + 0.000001)
+        int_amount = max(int_amount, 0)
+        return int_amount
+
+    def to_valid_market_price(self, price):
+        if price <= self.market_minimum:
+            return self.market_minimum
+        if self.currency_increment > 1:
+            amount = price/self.currency_increment
+            sign = -1 if amount < 0 else 1
+            amount = sign * math.floor(abs(amount) + 0.5) * self.currency_increment
+            return amount
+        return price
+    
+    def calculate_fee(self, price, percent):
+        if percent <= 0:
+            return 0
+        return self.to_valid_market_price(math.floor(price * percent))
+    
+    def get_total_with_fees(self, price):
+        valid_market_price = self.to_valid_market_price(price)
+        pub_fee = self.calculate_fee(price, self.publisher_fee_percent_default)
+        steam_fee = self.calculate_fee(price, self.fee_percent)
+        return valid_market_price + pub_fee + steam_fee
+
+    def get_item_price_from_total(self, total_price: int) -> int:
+        initial_guess = math.floor(
+            total_price / ( 1.0 + self.publisher_fee_percent_default + self.fee_percent))
+        max_base = total_price - (2 * self.market_minimum)
+        base_price = self.to_valid_market_price(min(initial_guess, max_base))
+        for _ in range(3):
+            calculated = self.get_total_with_fees(base_price)
+            if calculated == total_price:
+                return base_price
+            if calculated < total_price:
+                base_price += self.currency_increment
+            else:
+                base_price -= self.currency_increment
+                break
+        return max(self.market_minimum, base_price)
+    
+    def calculate_seller_price(self, buyer_price: float) -> int:
+        """
+        Removes market commission from the price
+
+        Returns:
+        int: The price is in minor units, which is accepted when listing on the market
+        """
+        int_buyer_price = self.get_int_price(buyer_price)
+        return self.get_item_price_from_total(int_buyer_price)
+
+
 class OldFeeCounter:
     """
     This is an old algorithm that calculates fees incorrectly
