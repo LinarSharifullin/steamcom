@@ -1,5 +1,7 @@
 import math, warnings
 
+from steamcom.models import FeePrice
+
 
 class FeeCounter:
     def __init__(self, fee_percent: float = 0.05,  market_minimum: int = 1,
@@ -46,26 +48,34 @@ class FeeCounter:
             total_price / ( 1.0 + self.publisher_fee_percent_default + self.fee_percent))
         max_base = total_price - (2 * self.market_minimum)
         base_price = self.to_valid_market_price(min(initial_guess, max_base))
-        for _ in range(3):
+        higher = False
+        for _ in range(30):
             calculated = self.get_total_with_fees(base_price)
             if calculated == total_price:
                 return base_price
             if calculated < total_price:
+                if higher:
+                    break
                 base_price += self.currency_increment
             else:
+                if base_price <= self.market_minimum:
+                    break
                 base_price -= self.currency_increment
-                break
+                higher = True
         return max(self.market_minimum, base_price)
     
-    def calculate_seller_price(self, buyer_price: float) -> int:
+    def calculate_seller_price(self, buyer_price: float) -> FeePrice:
         """
         Removes market commission from the price
 
         Returns:
-        int: The price is in minor units, which is accepted when listing on the market
+        The prices is in minor units, which Steam market works with
         """
         int_buyer_price = self.get_int_price(buyer_price)
-        return self.get_item_price_from_total(int_buyer_price)
+        seller_receive = self.get_item_price_from_total(int_buyer_price)
+        buyer_pay = self.get_total_with_fees(seller_receive)
+        return FeePrice(buyer_pay, seller_receive)
+
 
 
 class OldFeeCounter:

@@ -85,6 +85,11 @@ class WalletInfo(NamedTuple):
         return f'balance: {self.balance}'
 
 
+class FeePrice(NamedTuple):
+    buyer_pay: int
+    seller_receive: int
+
+
 class HistoryStatus(enum.IntEnum):
     LISTED = 1
     CANCELED = 2
