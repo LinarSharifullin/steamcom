@@ -25,6 +25,8 @@ class FeeCounter:
     def to_valid_market_price(self, price):
         if price <= self.market_minimum:
             return self.market_minimum
+        if price <= self.currency_increment:
+            return self.currency_increment
         if self.currency_increment > 1:
             amount = price/self.currency_increment
             sign = -1 if amount < 0 else 1
