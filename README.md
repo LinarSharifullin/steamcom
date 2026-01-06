@@ -419,6 +419,6 @@ The response is the same as get_my_history
 ## calculate_seller_price(self, buyer_price: float) -> FeePrice
 Reponse
 ```python
->>> fee_price steam_client.fee_counter.calculate_seller_price(100)
+>>> steam_client.fee_counter.calculate_seller_price(100)
 FeePrice(buyer_pay=10000, seller_receive=8697)
 ```
