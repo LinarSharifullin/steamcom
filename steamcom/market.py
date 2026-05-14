@@ -4,6 +4,7 @@ import requests
 import json
 import time
 import urllib.parse
+import re
 from decimal import Decimal
 
 from steamcom.utils import (login_required, text_between,
@@ -204,16 +205,23 @@ class SteamMarket:
         url = SteamUrl.COMMUNITY + '/market/listings/{}/{}'
         url_name = urllib.parse.quote(market_hash_name)
         response = self.session.get(url.format(app_id, url_name)).text
-        if 'user_info' not in response:
+        if 'logged_in":true' not in response:
             raise SessionIsInvalid()
-        elif 'Market_LoadOrderSpread' not in response:
+        elif 'rgCompactBuyOrders' not in response:
             raise ApiException('No one is selling this item')
-        elif 'mybuyorder' in response:
-            buy_orders = get_market_listings_from_html(response)['buy_orders']
-            first_buy_order = list(buy_orders.keys())[0]
-            return buy_orders[first_buy_order]
-        else:
+        pattern = r'(?<=rgBuyOrders\\":\[)(.*?)(?=\],\\"rgSellOrders)'
+        match = re.search(pattern, response)
+        if not match or not match.group(0):
             return None
+        order = json.loads(match.group(0).encode().decode("unicode_escape"))
+        return {
+            'order_id': order['buy_orderid'],
+            'quantity': int(order['quantity_remaining']),
+            'price': order['price']/100,
+            'item_name': order['hash_name'],
+            'item_link': url.format(app_id, url_name),
+            'market_hash_name': order['hash_name']
+        }
 
     def get_my_history(self, events_value: int = 5000, delay: int = 3,
                        attempts: int = 3) -> dict:
