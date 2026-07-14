@@ -30,7 +30,7 @@ class SteamClient:
         self.identity_secret = identity_secret
         self.session = session
         self.session.headers.update({
-            'Accept-Encoding': 'gzip, deflate, br'
+            'Accept-Encoding': 'gzip, deflate, br, zstd'
         })
         self.steam_id = ''  # will be added after login
         self.refresh_token = ''
