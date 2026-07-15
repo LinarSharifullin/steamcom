@@ -30,7 +30,20 @@ class SteamClient:
         self.identity_secret = identity_secret
         self.session = session
         self.session.headers.update({
-            'Accept-Encoding': 'gzip, deflate, br, zstd'
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Cache-Control": "max-age=0",
+            "Connection": "keep-alive",
+            "Sec-Ch-Ua": "\"Chromium\";v=\"143\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"143\"",
+            "Sec-Ch-Ua-Mbile": "?0",
+            "Sec-Ch-Ua-Platform": "\"Linux\"",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "none",
+            "Sec-Fetch-User": "?1",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
         })
         self.steam_id = ''  # will be added after login
         self.refresh_token = ''
