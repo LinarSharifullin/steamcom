@@ -9,7 +9,7 @@ import requests
 
 from steamcom.login import LoginExecutor
 from steamcom.confirmations import ConfirmationExecutor
-from steamcom.utils import (login_required, parse_price, api_request,
+from steamcom.utils import (login_required, api_request,
                             merge_items_with_descriptions_from_inventory,
                             get_key_value_from_url, account_id_to_steam_id,
                             create_offer_dict)
