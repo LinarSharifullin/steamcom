@@ -92,7 +92,7 @@ def get_market_listings_from_html(html: str) -> dict:
     buy_orders_dict = {}
     for node in nodes:
         if node.select('#my_market_selllistings_number'):
-            sell_listings_dict = get_sell_listings_from_node(node)
+            sell_listings_dict.update(get_sell_listings_from_node(node))
         elif node.select('#my_market_listingstoconfirm_number'):
             sell_listings_awaiting_conf = get_sell_listings_from_node(node)
             for listing in sell_listings_awaiting_conf.values():
