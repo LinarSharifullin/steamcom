@@ -233,9 +233,9 @@ class SteamClient:
 
     @login_required
     def get_wallet_balance(self, full_data: bool = False) -> Union[float, dict]:
-        market_page_response = self.session.get(SteamUrl.COMMUNITY + '/market')
+        my_inventory_resposne = self.session.get(SteamUrl.COMMUNITY + '/my/inventory')
         pattern = r'var g_rgWalletInfo = (\{.*?\});'
-        match = re.search(pattern, market_page_response.text)
+        match = re.search(pattern, my_inventory_resposne.text)
         balance_data = json.loads(match.group(1))
         if full_data:
             return balance_data
