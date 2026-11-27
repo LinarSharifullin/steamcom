@@ -65,37 +65,41 @@ class SteamMarket:
 
     @login_required
     def get_my_market_listings(self, delay: int = 3) -> dict:
-        response = self.session.get(SteamUrl.COMMUNITY + '/market')
-        if response.status_code != 200:
-            text = 'Problem getting the listings. http code: {}'
-            raise ApiException(text.format(response.status_code))
-        print('Received market page')
-        assets_descriptions = json.loads(
-            text_between(response.text, 'var g_rgAssets = ', ';\n'))
-        listing_id_to_assets_address = \
-            get_listing_id_to_assets_address_from_html(response.text)
-        listings = get_market_listings_from_html(response.text)
-        listings = merge_items_with_descriptions_from_listing(
-            listings, listing_id_to_assets_address, assets_descriptions)
-        listings_end = '<span id="tabContentsMyActiveMarketListings_end">'
-        listings_total = '<span id="tabContentsMyActiveMarketListings_total">'
-        if listings_end in response.text:
-            n_showing = int(text_between(response.text,
-                                         listings_end, '</span>'))
-            n_total = int(text_between(
-                response.text, listings_total, '</span>').replace(',', ''))
-            if n_showing < n_total < 1000:
-                listings_2 = self._parse_listings(n_showing, -1)
-                print('Received listings')
+#         response = self.session.get(SteamUrl.COMMUNITY + '/market')
+#         if response.status_code != 200:
+#             text = 'Problem getting the listings. http code: {}'
+#             raise ApiException(text.format(response.status_code))
+#         print('Received market page')
+#         assets_descriptions = json.loads(
+#             text_between(response.text, 'var g_rgAssets = ', ';\n'))
+#         listing_id_to_assets_address = \
+#             get_listing_id_to_assets_address_from_html(response.text)
+#         listings = get_market_listings_from_html(response.text)
+#         listings = merge_items_with_descriptions_from_listing(
+#             listings, listing_id_to_assets_address, assets_descriptions)
+#         listings_end = '<span id="tabContentsMyActiveMarketListings_end">'
+#         listings_total = '<span id="tabContentsMyActiveMarketListings_total">'
+        listings = {'sell_listings': {}, 'buy_orders': None}
+        url = '{}/market/mylistings/render/?query=&start=0&count=100'\
+            .format(SteamUrl.COMMUNITY)
+        jresp = api_request(self.session, url)
+        listing_id_to_assets_address =\
+            get_listing_id_to_assets_address_from_html(
+                jresp.get('hovers'))
+        listings_2 = get_market_sell_listings_from_api(
+            jresp.get('results_html'))
+        listings_2 = merge_items_with_descriptions_from_listing(
+            listings_2, listing_id_to_assets_address,
+            jresp.get('assets'))
+        listings['sell_listings'] = listings_2['sell_listings']
+        listings_total = jresp['total_count']
+        if listings_total > 100:
+            for start in range(100, listings_total, 100):
+                time.sleep(delay)
+                listings_2 = self._parse_listings(start, 100)
+                print(f'Received listings {len(listings["sell_listings"])}/{listings_total}')
                 listings['sell_listings']\
                     = listings['sell_listings'] | listings_2
-            else:
-                for i in range(0, n_total, 100):
-                    time.sleep(delay)
-                    listings_2 = self._parse_listings(n_showing + i, 100)
-                    print(f'Received listings {i}/{n_total}')
-                    listings['sell_listings']\
-                        = listings['sell_listings'] | listings_2
         return listings
 
     def _parse_listings(self, start: int, count: int) -> dict:
